@@ -18,6 +18,7 @@ int main ()
     for(int i = 0; i < workers_amount; i++)
     {
         workers[i] = new Worker();
+        workers[i] -> ID = i+1;
     }
 
     if(!read_worker_data(workers))
@@ -34,42 +35,35 @@ bool read_worker_data(Worker **workers)
 {
     int k = amount_of_skills*workers_amount;
     int skill_tab[k];
-    cout << "k" << k << endl;
+   
     file.open(file_name_worker);
     if(!file.good())
     {
         cout << "Nie mozna wczytac pliku worker_data.txt" << endl;
         return false;
     }
-
-    while(true)
-    {   
-        for (int i = 0; i < 9; i++)
-        {
-            file >> skill_tab[i];
-            cout << "lala" << skill_tab[i] << endl;
-        }
-        
-        if(file.good())
-        {
-            for(int i = 0; i < amount_of_skills; i++)
-            {
-                workers[0] -> skills[i] = skill_tab[i];
-            }
-
-            for(int i = 3; i < amount_of_skills + 3; i++)
-            {
-                workers[1] -> skills[i] = skill_tab[i];
-            }
-
-        //    for(int i = 6; i < amount_of_skills + 6; i++)
-       //     {
-       //         workers[2] -> skills[i] = skill_tab[i];
-      //      }
-        }
-        else
-            break;
+ 
+    for (int i = 0; i < 9; i++)
+    {
+        file >> skill_tab[i];
+        //cout << skill_tab[i];
     }
+    
+    for(int i = 0; i < amount_of_skills; i++)
+    {
+        workers[0] -> skills[i] = skill_tab[i];
+    }
+     
+    for(int i = 3; i < amount_of_skills + 3; i++)
+    {
+        workers[1] -> skills[i-3] = skill_tab[i];
+    }
+   
+    for(int i = 6; i < amount_of_skills + 6; i++)
+    {
+        workers[2] -> skills[i-6] = skill_tab[i];
+    }
+    
     return true;
     //
 }
