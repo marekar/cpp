@@ -22,7 +22,7 @@ int main ()
 
     if(!read_worker_data(workers))
         cout << "Wystapil blad podczas pobierania danych " << endl;
-    
+
 
     workers[0] -> print_worker_data();
     workers[1] -> print_worker_data();
@@ -54,7 +54,16 @@ bool read_worker_data(Worker **workers)
         {
             for(int i = 0; i < amount_of_skills; i++)
             {
+<<<<<<< HEAD
                 workers[0] -> skills[i] = skill_tab[i];
+=======
+                for(; i < k; i++)
+                {
+                    workers[j] -> skills[i] = skill_tab[i];
+                }
+                i += amount_of_skills;
+                k += k;
+>>>>>>> 5b08e4d591d776f90edc2d2598c722af272d3575
             }
 
             for(int i = 3; i < amount_of_skills + 3; i++)
