@@ -1,0 +1,19 @@
+#ifndef WORKER_H
+#define WORKER_H
+
+#include <iostream>
+
+#define amount_of_skills 3
+using namespace std;
+
+class Worker
+{
+public:
+    int ID;
+    int skills[amount_of_skills];
+
+    Worker(int ID_=0, int A = 0, int B = 0, int C = 0);
+    void print_worker_data();
+};
+
+#endif
