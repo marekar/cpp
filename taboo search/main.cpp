@@ -32,7 +32,6 @@ int main ()
 
 bool read_worker_data(Worker **workers)
 {
-    int n = 0;
     int k = amount_of_skills*workers_amount;
     int skill_tab[k];
     cout << "k" << k << endl;
