@@ -42,6 +42,8 @@ bool read_worker_data(Worker **workers)
         //cout << skill_tab[i];
     }
     
+    // to jeszcze nie dziala
+    /*
     for(int j = 0; j < workers_amount; j++)
     {
         for(n = m; n < amount_of_skills*(j+1); n++)
@@ -55,8 +57,9 @@ bool read_worker_data(Worker **workers)
         }
         
     }
-    //
-    /*for(int i = 0; i < amount_of_skills; i++)
+    */
+
+    for(int i = 0; i < amount_of_skills; i++)
     {
         workers[0] -> skills[i] = skill_tab[i];
     }
@@ -70,8 +73,7 @@ bool read_worker_data(Worker **workers)
     {
         workers[2] -> skills[i-6] = skill_tab[i];
     }
-    */
+    
     return true;
     
-    //
 }
