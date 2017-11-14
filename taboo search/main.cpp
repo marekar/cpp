@@ -1,12 +1,4 @@
 #include "worker.h"
-#include <fstream>
-
-#define workers_amount 3
-
-const char * file_name_worker = "worker_data.txt";
-
-bool read_worker_data(Worker **workers);
-ifstream file;
 
 int main ()
 {
@@ -31,39 +23,4 @@ int main ()
     return 0;
 }
 
-bool read_worker_data(Worker **workers)
-{
-    int k = amount_of_skills*workers_amount;
-    int skill_tab[k];
-   
-    file.open(file_name_worker);
-    if(!file.good())
-    {
-        cout << "Nie mozna wczytac pliku worker_data.txt" << endl;
-        return false;
-    }
- 
-    for (int i = 0; i < 9; i++)
-    {
-        file >> skill_tab[i];
-        //cout << skill_tab[i];
-    }
-    
-    for(int i = 0; i < amount_of_skills; i++)
-    {
-        workers[0] -> skills[i] = skill_tab[i];
-    }
-     
-    for(int i = 3; i < amount_of_skills + 3; i++)
-    {
-        workers[1] -> skills[i-3] = skill_tab[i];
-    }
-   
-    for(int i = 6; i < amount_of_skills + 6; i++)
-    {
-        workers[2] -> skills[i-6] = skill_tab[i];
-    }
-    
-    return true;
-    //
-}
+
