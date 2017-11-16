@@ -1,8 +1,6 @@
 #include "worker.h"
 
-
 const char * file_name_worker = "worker_data.txt";
-
 
 Worker :: Worker(int ID_, int A, int B, int C)
 {
@@ -22,11 +20,12 @@ void Worker :: print_worker_data()
     cout << endl << "....." << endl;
 }
 
+//Funkcja odczytujaca z pliku wydajnosci pracownikow
+//wypelnia tablice skills[] dla kazdego pracownika
 bool read_worker_data(Worker **workers)
 {
     ifstream file;
     int k = amount_of_skills*workers_amount;
-    int n = 0, m = 0;
     int skill_tab[k];
     
     file.open(file_name_worker);
@@ -42,38 +41,13 @@ bool read_worker_data(Worker **workers)
         //cout << skill_tab[i];
     }
     
-    // to jeszcze nie dziala
-    /*
     for(int j = 0; j < workers_amount; j++)
     {
-        for(n = m; n < amount_of_skills*(j+1); n++)
+        for(int i = j*amount_of_skills; i < amount_of_skills*(j+1); i++)
         {
-            for(int l = 0; l < amount_of_skills; l++)
-            {
-                workers[j] -> skills[l] = skill_tab[n];
-            }
-            m += amount_of_skills;
-            cout<<m<<endl;
+            workers[j] -> skills[i - j*amount_of_skills] = skill_tab[i];
         }
-        
     }
-    */
 
-    for(int i = 0; i < amount_of_skills; i++)
-    {
-        workers[0] -> skills[i] = skill_tab[i];
-    }
-     
-    for(int i = 3; i < amount_of_skills + 3; i++)
-    {
-        workers[1] -> skills[i-3] = skill_tab[i];
-    }
-   
-    for(int i = 6; i < amount_of_skills + 6; i++)
-    {
-        workers[2] -> skills[i-6] = skill_tab[i];
-    }
-    
-    return true;
-    
+    return true; 
 }
