@@ -16,11 +16,12 @@ public:
     int ID;
     int skills[amount_of_skills];
 
-    Worker(int ID_=0, int A = 0, int B = 0, int C = 0);
+    Worker(int ID_=0);
     void print_worker_data();
 };
 
-
+//Funkcja odczytujaca z pliku wydajnosci pracownikow
+//wypelnia tablice skills[] dla kazdego pracownika
 bool read_worker_data(Worker **workers);
 
 #endif

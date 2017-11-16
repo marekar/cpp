@@ -2,12 +2,13 @@
 
 const char * file_name_worker = "worker_data.txt";
 
-Worker :: Worker(int ID_, int A, int B, int C)
+Worker :: Worker(int ID_)
 {
     ID = ID_;
-    skills[0] = A;
-    skills[1] = B;
-    skills[2] = C;
+    for(int i = 0; i < amount_of_skills; i++)
+    {
+        skills[i] = 0;
+    }
 }
 
 void Worker :: print_worker_data()
