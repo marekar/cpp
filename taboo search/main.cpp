@@ -1,6 +1,9 @@
 #include "worker.h"
 #include "problem.h"
 
+void show_workers(Worker** workers);
+void show_problems(Problem** problems);
+
 int main ()
 {
     Worker* workers[workers_amount];
@@ -18,6 +21,14 @@ int main ()
         problems[i] -> problem_ID = i;
     }
 
+    show_workers(workers);
+    show_problems(problems);
+   
+    return 0;
+}
+
+void show_workers(Worker** workers)
+{
     if(!read_worker_data(workers))
         cout << "Wystapil blad podczas pobierania danych " << endl;
     else
@@ -28,8 +39,11 @@ int main ()
         }
         cout << endl;
     }
+}
 
-     if(!read_problem_data(problems))
+void show_problems(Problem** problems)
+{
+    if(!read_problem_data(problems) || !(read_penalties(problems)))
         cout << "Wystapil blad podczas pobierania danych " << endl;
     else
     {
@@ -37,9 +51,5 @@ int main ()
         {
             problems[i] -> print_problem();
         }
-    }
-    
-    return 0;
+    } 
 }
-
-
