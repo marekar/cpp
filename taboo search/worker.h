@@ -15,7 +15,7 @@ class Worker
 public:
     int ID;
     int skills[amount_of_skills];
-
+    float teamwork;
     Worker(int ID_=0);
     void print_worker_data();
 };

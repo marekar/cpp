@@ -14,6 +14,7 @@ class Problem
 public:
     int problem_ID;
     int requirements[problem_size];
+    int deadline;
     int penalty;
     int penalty_per_hour;
 

@@ -9,6 +9,7 @@ Worker :: Worker(int ID_)
     {
         skills[i] = 0;
     }
+    teamwork = 0.85;
 }
 
 void Worker :: print_worker_data()
