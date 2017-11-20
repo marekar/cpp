@@ -8,12 +8,12 @@ worker.o: worker.cpp worker.h
 
 problem.o: problem.cpp problem.h
 	g++ -c -Wall -std=c++11 problem.cpp
-	
-main.o: main.cpp
-	g++ -c -Wall -std=c++11 main.cpp
 
 problem_instance.o: problem_instance.h problem_instance.cpp
 	g++ -c -Wall -std=c++11 problem_instance.cpp
 	
+main.o: main.cpp
+	g++ -c -Wall -std=c++11 main.cpp
+		
 clean:
 	rm -rf *o main
