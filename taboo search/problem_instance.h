@@ -5,7 +5,7 @@
 #include <fstream>
 #include "problem.h"
 #include "worker.h"
-#include <Vector>
+#include <vector>
 #include <algorithm>
 #define problem_size 4
 #define problems_amount 6
@@ -33,7 +33,7 @@ public:
 
 
 };
-bool read_solution_data(vector<vector<int>> &solution, int w_number, int t_number);
+bool read_solution_data(vector< vector<int> > &solution, int w_number, int t_number);
 
 
 #endif

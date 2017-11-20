@@ -6,7 +6,7 @@ ProblemInstance ::ProblemInstance(Worker *workers_list, int workers_size, Proble
     this->tasks = tasks_list;
     this->tasks_size = tasks_size;
     this->employees_amount = workers_amount;
-    this->solution = vector<vector<int>>(employees_amount, vector<int>(tasks_size, 0));
+    this->solution = vector< vector<int> >(employees_amount, vector<int>(tasks_size, 0));
 }
 
 ProblemInstance ::~ProblemInstance()
@@ -18,8 +18,13 @@ ProblemInstance ::~ProblemInstance()
 bool ProblemInstance::is_solution_legal()
 {
 
+<<<<<<< HEAD
     vector<vector<int>> shared_job_vector = vector<vector<int>>(solution[0].size() + 1, vector<int>());
     float total_cost = 0;
+=======
+    vector< vector<int> > shared_job_vector = vector< vector<int> >(solution[0].size() + 1, vector<int>());
+    float total_cost;
+>>>>>>> 10714a0387d990b1d8db45159366125b508e67f8
     bool is_ready_to_shared_job;
     vector<float> worker_time = vector<float>(employees_amount, 0.0);
     int j = 0;
