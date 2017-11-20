@@ -24,7 +24,7 @@ void Worker :: print_worker_data()
 
 //Funkcja odczytujaca z pliku wydajnosci pracownikow
 //wypelnia tablice skills[] dla kazdego pracownika
-bool read_worker_data(Worker **workers)
+bool read_worker_data(Worker *workers)
 {
     ifstream file;
     int k = amount_of_skills*workers_amount;
@@ -47,7 +47,7 @@ bool read_worker_data(Worker **workers)
     {
         for(int i = j*amount_of_skills; i < amount_of_skills*(j+1); i++)
         {
-            workers[j] -> skills[i - j*amount_of_skills] = skill_tab[i];
+            workers[j].skills[i - j*amount_of_skills] = skill_tab[i];
         }
     }
 

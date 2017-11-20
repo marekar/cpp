@@ -16,8 +16,7 @@ class ProblemInstance
 
 {
 private:
-    Worker * employees;
-    Problem * tasks;
+
     int employees_amount;
     int tasks_size;
     float get_resolving_time(int worker_number, int task_number);
@@ -25,6 +24,8 @@ private:
     float get_time_for_one(int worker_number, int task_number);
     float get_penalty(int task_number, float finish_time);
 public:
+    Worker * employees;
+    Problem * tasks;
     bool is_solution_legal();
     vector < vector < int > > solution;
     ProblemInstance(Worker * workers_list, int workers_size, Problem * tasks_list, int tasks_size);

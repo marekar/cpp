@@ -22,6 +22,6 @@ public:
 
 //Funkcja odczytujaca z pliku wydajnosci pracownikow
 //wypelnia tablice skills[] dla kazdego pracownika
-bool read_worker_data(Worker **workers);
+bool read_worker_data(Worker *workers);
 
 #endif

@@ -22,6 +22,6 @@ public:
 
 };
 
-bool read_problem_data(Problem ** problems);
-bool read_penalties(Problem ** problems);
+bool read_problem_data(Problem * problems);
+bool read_penalties(Problem * problems);
 #endif

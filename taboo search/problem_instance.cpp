@@ -19,9 +19,9 @@ bool ProblemInstance::is_solution_legal()
 {
 
     vector<vector<int>> shared_job_vector = vector<vector<int>>(solution[0].size() + 1, vector<int>());
-    float total_cost;
+    float total_cost = 0;
     bool is_ready_to_shared_job;
-    vector<float> worker_time = vector<float>(0.0, employees_amount);
+    vector<float> worker_time = vector<float>(employees_amount, 0.0);
     int j = 0;
     for (auto it = solution.begin(); it != solution.end(); it++)
     {
@@ -46,87 +46,25 @@ bool ProblemInstance::is_solution_legal()
     auto solution_copy = solution;
     int job_number;
     bool changes_appeared;
-    cout << "survived first check" << endl;
-    cout << "solution copy" << endl;
-    for (auto debug_it = solution_copy.begin(); debug_it != solution_copy.end(); debug_it++)
-    {
-
-        for (auto debug2_it = (*debug_it).begin(); debug2_it != (*debug_it).end(); debug2_it++)
-        {
-            cout << *debug2_it << " ";
-        }
-        cout << endl;
-    }
-    cout << "shared_job_vec" << endl;
-    for (auto debug_it = shared_job_vector.begin(); debug_it != shared_job_vector.end(); debug_it++)
-    {
-
-        for (auto debug2_it = (*debug_it).begin(); debug2_it != (*debug_it).end(); debug2_it++)
-        {
-            cout << *debug2_it << " ";
-        }
-        cout << endl;
-    }
 
     int not_resolved_jobs = 1;
     while (not_resolved_jobs > 0)
     {
-        cout << " loop1 ";
-        changes_appeared = false;
-
-        cout << "shared_job_vec" << endl;
-        for (auto debug_it = shared_job_vector.begin(); debug_it != shared_job_vector.end(); debug_it++)
-        {
-
-            for (auto debug2_it = (*debug_it).begin(); debug2_it != (*debug_it).end(); debug2_it++)
-            {
-                cout << *debug2_it << " ";
-            }
-            cout << endl;
-        }
-
-        cout << "solution copy" << endl;
-        for (auto debug_it = solution_copy.begin(); debug_it != solution_copy.end(); debug_it++)
-        {
-
-            for (auto debug2_it = (*debug_it).begin(); debug2_it != (*debug_it).end(); debug2_it++)
-            {
-                cout << *debug2_it << " ";
-            }
-            cout << endl;
-        }
 
         for (auto it = solution_copy.begin(); it != solution_copy.end(); it++)
         {
-            cout << "A ";
+
             while ((*it).size() > 0 and shared_job_vector.at((*it).at(0)).size() == 1)
             { //check if is this job for one person
-                cout << "before cost";
-                //worker_time.at(shared_job_vector.at((*it).at(0)).at(0)) += get_time_for_one(shared_job_vector.at((*it).at(0)).at(0), (*it).at(0));
-                //total_cost += get_penalty((*it).at(0), worker_time.at(shared_job_vector.at((*it).at(0)).at(0)));
-                (*it).erase((*it).begin()); //remove job from job list, TODO increment time
-                cout << "after cost";
-                cout << "ERASING" << endl;
-                changes_appeared = true;
-                cout << "solution copy" << endl;
-                for (auto debug_it = solution_copy.begin(); debug_it != solution_copy.end(); debug_it++)
-                {
 
-                    for (auto debug2_it = (*debug_it).begin(); debug2_it != (*debug_it).end(); debug2_it++)
-                    {
-                        cout << *debug2_it << " ";
-                    }
-                    cout << endl;
-                }
-            }
-            if ((*it).size() == 0)
-            {
-                solution_copy.erase(it);
+                worker_time.at(shared_job_vector.at((*it).at(0)).at(0)) += get_time_for_one(shared_job_vector.at((*it).at(0)).at(0), (*it).at(0));
+                total_cost += get_penalty((*it).at(0), worker_time.at(shared_job_vector.at((*it).at(0)).at(0)));
+                (*it).erase((*it).begin()); //remove job from job list, TODO increment time
+
                 changes_appeared = true;
-                break;
-                ;
             }
-            else
+
+            if ((*it).size() != 0)
             {
                 is_ready_to_shared_job = true;
 
@@ -144,7 +82,7 @@ bool ProblemInstance::is_solution_legal()
                     job_number = ((*it)[0]);
                     changes_appeared = true;
                     float max_starting_time = 0;
-                    float job_finish_time, job_time;
+                    float job_finish_time = 0, job_time = 0;
                     for (auto job_it = shared_job_vector.at((*it)[0]).begin(); job_it != shared_job_vector.at(job_number).end(); job_it++)
                     {
                         if (max_starting_time < worker_time.at(*job_it)) //wait for all workers to be ready
@@ -157,7 +95,6 @@ bool ProblemInstance::is_solution_legal()
                     for (auto job_it = shared_job_vector.at((*it)[0]).begin(); job_it != shared_job_vector.at(job_number).end(); job_it++)
                     {
                         worker_time.at(*job_it) = job_finish_time;
-                        cout << "erasing... multiple" << endl;
                         solution_copy.at(*job_it).erase(solution_copy.at(*job_it).begin()); // erase all shared job, TODO CALC TIME
                     }
                 }
@@ -178,17 +115,25 @@ bool ProblemInstance::is_solution_legal()
             }
         }
     }
-    cout << total_cost;
+    cout << endl
+         << "total cost: " << total_cost << endl;
     return true;
 }
 
 float ProblemInstance::get_time_for_one(int worker_number, int task_number)
 {
+
+    if (task_number == 0)
+        return 0.0;
+    task_number = task_number - 1; // task are indexed from 0
     float time = 0;
+
     for (int i = 0; i < amount_of_skills; i++)
     {
-        time += tasks[task_number].requirements[i] / employees[worker_number].skills[i];
+
+        time += tasks[task_number].requirements[i] / (employees[worker_number].skills[i] + 0.1);
     }
+
     return time;
 }
 
@@ -206,21 +151,23 @@ float ProblemInstance::get_time_for_many(vector<int> worker_list, int task_numbe
 
         for (auto it = worker_list.begin(); it != worker_list.end(); it++)
         {
-            summary_skills[i] += employees[*it].skills[i] * employees[*it].teamwork;
+            summary_skills[i] += (employees[*it].skills[i]) * employees[*it].teamwork;
         }
 
         time += tasks[task_number].requirements[i] / summary_skills[i];
     }
     delete[] summary_skills;
+
     return time;
 }
 
 float ProblemInstance::get_penalty(int task_number, float finish_time)
 {
-    if (tasks[task_number].deadline > finish_time)
+
+    if (tasks[task_number].deadline > finish_time) //task 0 means free time
         return 0;
     else
-        return tasks[task_number].penalty + tasks[task_number].penalty_per_hour * (finish_time - tasks[task_number].deadline);
+        return tasks[task_number].penalty * 1.0 + tasks[task_number].penalty_per_hour * (finish_time - tasks[task_number].deadline);
 }
 bool read_solution_data(vector<vector<int>> &solution, int w_number, int t_number)
 {
@@ -239,7 +186,6 @@ bool read_solution_data(vector<vector<int>> &solution, int w_number, int t_numbe
         for (int j = 0; j < t_number; j++)
         {
             file >> data;
-            cout << "getting" << i << j << "   " << data << endl;
 
             solution.at(i).at(j) = data;
         }
