@@ -29,7 +29,7 @@ int main ()
 
     ProblemInstance BigProblem = ProblemInstance(workersPtr, workers_amount, problemPtr, problems_amount);
 
-    vector<vector<int>> example_solution = vector<vector<int>>(workers_amount, vector<int>(problems_amount, 0));
+    vector< vector<int> > example_solution = vector< vector<int> >(workers_amount, vector<int>(problems_amount, 0));
 
 
     if(!read_solution_data(example_solution, workers_amount, problems_amount)){
