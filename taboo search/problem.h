@@ -3,9 +3,7 @@
 
 #include <iostream>
 #include <fstream>
-
-#define problem_size 4
-#define problems_amount 6
+#include "consts.h"
 
 using namespace std;
 

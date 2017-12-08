@@ -1,6 +1,7 @@
 #include "worker.h"
 #include "problem.h"
 #include "problem_instance.h"
+#include "consts.h"
 void show_workers(Worker *workers);
 void show_problems(Problem *problems);
 
@@ -25,16 +26,19 @@ int main()
     ProblemInstance BigProblem = ProblemInstance(workers, workers_amount, problems, problems_amount);
     show_workers((BigProblem.employees));
     show_problems(problems);
-    vector<vector<int>> example_solution = vector<vector<int>>(workers_amount, vector<int>(problems_amount, 0));
 
-    if (!read_solution_data(example_solution, workers_amount, problems_amount))
-    {
-        return -1;
-    }
+    // vector<vector<int>> example_solution = vector<vector<int>>(workers_amount, vector<int>(problems_amount, 0));
 
-    BigProblem.solution = example_solution;
+    // if (!read_solution_data(example_solution, workers_amount, problems_amount))
+    // {
+    //     return -1;
+    // }
+    
+    // BigProblem.solution = example_solution;
+        BigProblem.show_workers();
+    BigProblem.build_first_solution();
 
-    if (BigProblem.is_solution_legal())
+    if (BigProblem.analyze_solution())
     {
         cout << "obliczono koszt rozwiązania!" << endl;
     }
@@ -42,7 +46,7 @@ int main()
     {
         cout << "rozwiazanie zabronione!";
     }
-
+    BigProblem.show_solution();
     return 0;
 }
 

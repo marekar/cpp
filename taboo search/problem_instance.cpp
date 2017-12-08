@@ -15,10 +15,58 @@ ProblemInstance ::~ProblemInstance()
     delete[] this->tasks;
 }
 
-bool ProblemInstance::is_solution_legal()
+void ProblemInstance::show_solution(){
+    cout << endl << "Solution" ;
+    for(int i = 0; i < workers_amount ; i++){
+        cout << endl << "worker " << i << "__\t ";
+        for(auto it = solution.at(i).begin(); it != solution.at(i).end() ; it++)
+            cout << *it <<"\t";
+    }
+
+}
+void ProblemInstance::show_workers(){
+    for(int i = 0 ; i < employees_amount ;i++){
+        employees[i].print_worker_data();
+    }
+}
+
+void ProblemInstance::build_first_solution(){
+    float total_cost = 0;
+    float one_task_cost = 0;
+    float* workers_current_time = new float[workers_amount];
+    int best_worker_for_task = 0;
+    for( int i = 0 ; i < workers_amount ; i++)
+        workers_current_time[i] = 0;
+
+    solution = vector<vector<int>>(employees_amount, vector<int>());
+    for(int i = 0 ; i < tasks_size ; i++){
+        one_task_cost = 9999999999.0;
+        best_worker_for_task = 0;
+        for(int j = 0 ; j < workers_amount ; j ++){
+            if(get_penalty(i + 1,get_time_for_one(j, i + 1) + workers_current_time[j]) < one_task_cost){
+                best_worker_for_task = j;
+                // cout << endl << "task " << i + 1 << " best worker " << j;
+
+                one_task_cost = get_penalty(i + 1,get_time_for_one(j, i + 1) + workers_current_time[j]);
+                // cout << endl << "task " << i + 1 << " best worker " << j << "cost " << one_task_cost;                
+            }
+
+        }
+        solution.at(best_worker_for_task).push_back(i + 1);
+        workers_current_time[best_worker_for_task] += get_time_for_one(best_worker_for_task, i + 1);
+        total_cost += one_task_cost;
+    }
+    delete[] workers_current_time;
+    cost = total_cost;
+
+}
+
+
+
+bool ProblemInstance::analyze_solution()
 {
 
-    vector<vector<int>> shared_job_vector = vector<vector<int>>(solution[0].size() + 1, vector<int>());
+    vector<vector<int>> shared_job_vector = vector<vector<int>>(tasks_size + 1, vector<int>());
     float total_cost = 0;
     bool is_ready_to_shared_job;
     vector<float> worker_time = vector<float>(employees_amount, 0.0);
@@ -130,8 +178,7 @@ float ProblemInstance::get_time_for_one(int worker_number, int task_number)
 
     for (int i = 0; i < amount_of_skills; i++)
     {
-
-        time += tasks[task_number].requirements[i] / (employees[worker_number].skills[i] + 0.1);
+        time += tasks[task_number].requirements[i] / (float)(employees[worker_number].skills[i]);
     }
 
     return time;
@@ -163,6 +210,10 @@ float ProblemInstance::get_time_for_many(vector<int> worker_list, int task_numbe
 
 float ProblemInstance::get_penalty(int task_number, float finish_time)
 {
+    if(task_number < 1)
+        return 0;
+    else
+        task_number--;
 
     if (tasks[task_number].deadline > finish_time) //task 0 means free time
         return 0;

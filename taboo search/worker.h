@@ -3,10 +3,8 @@
 
 #include <iostream>
 #include <fstream>
+#include "consts.h"
 
-//te stale zmienic w momencie modyfikacji pliku z danymi wejsciowymi
-#define amount_of_skills 4 //liczba umiejetnosci jednego pracownika
-#define workers_amount 3 //ilosc pracownikow
 
 using namespace std;
 
