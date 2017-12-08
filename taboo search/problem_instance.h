@@ -24,19 +24,26 @@ private:
     float get_time_for_one(int worker_number, int task_number);
     float get_penalty(int task_number, float finish_time);  
     vector < vector < int > >swap_workers();
+    void get_neighbours();
 public:
+
     Worker * employees;
     Problem * tasks;
     float get_cost(){return cost;}
-    bool analyze_solution();
-    void build_first_solution();
+
     vector < vector < int > > solution;
     vector <vector < vector < int > >> neighbours;
     ProblemInstance(Worker * workers_list, int workers_size, Problem * tasks_list, int tasks_size);
-    ~ProblemInstance();
+
+    void search_randomly();
+
+    bool analyze_solution();
+    void build_first_solution();
+
     void show_solution();
     void show_workers();
 
+    ~ProblemInstance();
 };
 bool read_solution_data(vector< vector<int> > &solution, int w_number, int t_number);
 

@@ -253,8 +253,37 @@ vector < vector < int > >ProblemInstance:: swap_workers(){
         v1 = rand() % solution.size();
         v2 = rand() % solution.size();
     }
+
     temp = swapped[v1];
     swapped[v1] = swapped[v2];
     swapped[v2] = temp;
+
     return swapped;
 }
+
+void ProblemInstance:: get_neighbours(){
+     neighbours.clear();
+    for(int i = 0 ; i < 10 ; i++){
+        neighbours.push_back(swap_workers());
+    }
+
+}
+
+    void ProblemInstance:: search_randomly(){
+        get_neighbours();
+        auto temp = solution;
+        float temp_cost = cost;
+        for(auto it = neighbours.begin() ; it != neighbours.end() ; it++){
+            temp = solution;
+            temp_cost = cost;
+            solution = *it;
+            if(analyze_solution() && temp_cost <= cost)
+
+                continue;
+            else
+                solution = temp;
+
+        }
+
+
+    }

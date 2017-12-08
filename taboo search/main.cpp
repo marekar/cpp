@@ -2,11 +2,13 @@
 #include "problem.h"
 #include "problem_instance.h"
 #include "consts.h"
+#include <time.h> 
 void show_workers(Worker *workers);
 void show_problems(Problem *problems);
 
 int main()
 {
+    srand (time(NULL));
     Worker *workers;
     Problem *problems;
 
@@ -36,18 +38,21 @@ int main()
     
     // BigProblem.solution = example_solution;
         BigProblem.show_workers();
-    cout << "building solution";
+    
     BigProblem.build_first_solution();
 
     if (BigProblem.analyze_solution())
     {
-        cout << "obliczono koszt rozwiązania!" << endl;
+        cout << "obliczono koszt rozwiazania!" << endl;
     }
     else
     {
         cout << "rozwiazanie zabronione!";
     }
+
     BigProblem.show_solution();
+    BigProblem.search_randomly();
+    BigProblem.show_solution();  
     return 0;
 }
 
@@ -57,11 +62,11 @@ void show_workers(Worker *workers)
         cout << "Wystapil blad podczas pobierania danych " << endl;
     else
     {
-        for (int i = 0; i < workers_amount; i++)
-        {
-            workers[i].print_worker_data();
-        }
-        cout << endl;
+        // for (int i = 0; i < workers_amount; i++)
+        // {
+        //     workers[i].print_worker_data();
+        // }
+        // cout << endl;
     }
 }
 
@@ -73,7 +78,7 @@ void show_problems(Problem *problems)
     {
         for (int i = 0; i < problems_amount; i++)
         {
-            problems[i].print_problem();
+            // problems[i].print_problem();
         }
     }
 }
