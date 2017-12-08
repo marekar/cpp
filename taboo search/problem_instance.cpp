@@ -244,3 +244,17 @@ bool read_solution_data(vector<vector<int>> &solution, int w_number, int t_numbe
 
     return true;
 }
+
+vector < vector < int > >ProblemInstance:: swap_workers(){
+    auto swapped = solution;
+    int v1 = 0, v2 = 0;
+    auto temp = solution[0];
+    while(v1 == v2){
+        v1 = rand() % solution.size();
+        v2 = rand() % solution.size();
+    }
+    temp = swapped[v1];
+    swapped[v1] = swapped[v2];
+    swapped[v2] = temp;
+    return swapped;
+}

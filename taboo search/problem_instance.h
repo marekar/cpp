@@ -22,7 +22,8 @@ private:
     float get_resolving_time(int worker_number, int task_number);
     float get_time_for_many(vector<int> worker_list, int task_number);
     float get_time_for_one(int worker_number, int task_number);
-    float get_penalty(int task_number, float finish_time);
+    float get_penalty(int task_number, float finish_time);  
+    vector < vector < int > >swap_workers();
 public:
     Worker * employees;
     Problem * tasks;
@@ -30,6 +31,7 @@ public:
     bool analyze_solution();
     void build_first_solution();
     vector < vector < int > > solution;
+    vector <vector < vector < int > >> neighbours;
     ProblemInstance(Worker * workers_list, int workers_size, Problem * tasks_list, int tasks_size);
     ~ProblemInstance();
     void show_solution();

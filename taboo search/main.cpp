@@ -36,6 +36,7 @@ int main()
     
     // BigProblem.solution = example_solution;
         BigProblem.show_workers();
+    cout << "building solution";
     BigProblem.build_first_solution();
 
     if (BigProblem.analyze_solution())
