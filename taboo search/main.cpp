@@ -12,6 +12,8 @@ int main()
     Worker *workers;
     Problem *problems;
 
+    time_t my_time, start;
+
     workers = new Worker[workers_amount];
     problems = new Problem[problems_amount];
 
@@ -37,7 +39,7 @@ int main()
     // }
     
     // BigProblem.solution = example_solution;
-        BigProblem.show_workers();
+    BigProblem.show_workers();
     
     BigProblem.build_first_solution();
 
@@ -51,8 +53,19 @@ int main()
     }
 
     BigProblem.show_solution();
-    BigProblem.search_randomly();
+
+    time(&start);
+    time(&my_time);
+    while(difftime(my_time,start) < 10){
+    BigProblem.search_randomly(10);
+    time(&my_time);
+    }
+
     BigProblem.show_solution();  
+    cout << endl << "after all iterations final cost : " << BigProblem.get_cost();
+
+
+
     return 0;
 }
 

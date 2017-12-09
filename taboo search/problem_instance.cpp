@@ -1,5 +1,7 @@
 #include "problem_instance.h"
 
+
+vector < vector < int > > ProblemInstance::null_sol = vector < vector < int > >();
 ProblemInstance ::ProblemInstance(Worker *workers_list, int workers_size, Problem *tasks_list, int tasks_size)
 {
     this->employees = workers_list;
@@ -15,11 +17,14 @@ ProblemInstance ::~ProblemInstance()
     delete[] this->tasks;
 }
 
-void ProblemInstance::show_solution(){
+void ProblemInstance::show_solution(vector < vector < int > > & sol){
+    if( sol == null_sol){
+        sol = solution;
+    }
     cout << endl << "Solution" ;
     for(int i = 0; i < workers_amount ; i++){
         cout << endl << "worker " << i << "__\t ";
-        for(auto it = solution.at(i).begin(); it != solution.at(i).end() ; it++)
+        for(auto it = sol.at(i).begin(); it != sol.at(i).end() ; it++)
             cout << *it <<"\t";
     }
 
@@ -69,6 +74,8 @@ bool ProblemInstance::analyze_solution()
     vector<vector<int>> shared_job_vector = vector<vector<int>>(tasks_size + 1, vector<int>());
     float total_cost = 0;
     bool is_ready_to_shared_job;
+    vector<vector<int>> gantt_worker_jobs = vector<vector<int>>(employees_amount, vector<int>());
+    vector<vector<float>> gantt_worker_time =  vector<vector<float>>(employees_amount, vector<float>()); 
     vector<float> worker_time = vector<float>(employees_amount, 0.0);
     int j = 0;
     for (auto it = solution.begin(); it != solution.end(); it++)
@@ -90,6 +97,11 @@ bool ProblemInstance::analyze_solution()
 
     shared_job_vector.at(0).insert(shared_job_vector.at(0).begin(), 0);
 
+    for(auto it = shared_job_vector.begin() ; it != shared_job_vector.end() ; it++){
+        if((*it).size() == 0)
+            return false; //not all jobs are assigned
+    }
+
     auto shared_job_vector_copy = shared_job_vector;
     auto solution_copy = solution;
     int job_number;
@@ -98,12 +110,13 @@ bool ProblemInstance::analyze_solution()
     int not_resolved_jobs = 1;
     while (not_resolved_jobs > 0)
     {
-
+        changes_appeared = false;
         for (auto it = solution_copy.begin(); it != solution_copy.end(); it++)
         {
-
             while ((*it).size() > 0 and shared_job_vector.at((*it).at(0)).size() == 1)
             { //check if is this job for one person
+                gantt_worker_time[shared_job_vector.at((*it).at(0)).at(0)].push_back(get_time_for_one(shared_job_vector.at((*it).at(0)).at(0), (*it).at(0)));
+                gantt_worker_jobs[shared_job_vector.at((*it).at(0)).at(0)].push_back((*it).at(0));
 
                 worker_time.at(shared_job_vector.at((*it).at(0)).at(0)) += get_time_for_one(shared_job_vector.at((*it).at(0)).at(0), (*it).at(0));
                 total_cost += get_penalty((*it).at(0), worker_time.at(shared_job_vector.at((*it).at(0)).at(0)));
@@ -129,7 +142,7 @@ bool ProblemInstance::analyze_solution()
                 {
                     job_number = ((*it)[0]);
                     changes_appeared = true;
-                    float max_starting_time = 0;
+                    float max_starting_time = 0, waiting_time = 0;
                     float job_finish_time = 0, job_time = 0;
                     for (auto job_it = shared_job_vector.at((*it)[0]).begin(); job_it != shared_job_vector.at(job_number).end(); job_it++)
                     {
@@ -141,9 +154,18 @@ bool ProblemInstance::analyze_solution()
                     total_cost += get_penalty(job_number, job_finish_time);
 
                     for (auto job_it = shared_job_vector.at((*it)[0]).begin(); job_it != shared_job_vector.at(job_number).end(); job_it++)
-                    {
+                    {   
+                        waiting_time = job_finish_time - job_time - worker_time.at(*job_it);
+                        if(waiting_time > 0.001){
+                        gantt_worker_time[*job_it].push_back(waiting_time);
+                        gantt_worker_jobs[*job_it].push_back(0);
+                            
+                        }
+                        gantt_worker_time[*job_it].push_back(job_time);
+                        gantt_worker_jobs[*job_it].push_back(job_number);
+                            
                         worker_time.at(*job_it) = job_finish_time;
-                        solution_copy.at(*job_it).erase(solution_copy.at(*job_it).begin()); // erase all shared job, TODO CALC TIME
+                        solution_copy.at(*job_it).erase(solution_copy.at(*job_it).begin()); 
                     }
                 }
             }
@@ -163,8 +185,9 @@ bool ProblemInstance::analyze_solution()
             }
         }
     }
-    cout << endl
-         << "total cost: " << total_cost << endl;
+    // cout << endl
+    //      << "total cost: " << total_cost << endl;
+    cost = total_cost;
     return true;
 }
 
@@ -261,15 +284,134 @@ vector < vector < int > >ProblemInstance:: swap_workers(){
     return swapped;
 }
 
+vector < vector < int > >ProblemInstance::add_jobs(int jobs_number){
+    auto new_sol = solution;
+    int job, worker, place, tries;
+
+    while(jobs_number > 0){
+        
+        tries = 0;
+        do{
+
+            worker = rand() % solution.size();
+        }while(tries++ < MAX_TRIES && new_sol[worker].size() >= tasks_size);
+        tries = 0;
+        do{
+
+            job = rand() % tasks_size;
+        }while(tries++ < MAX_TRIES && find(new_sol[worker].begin(), new_sol[worker].end(), job) != new_sol[worker].end());//dont add job that actually is in worker list
+
+        place = rand() % (new_sol[worker].size() + 1);
+
+        new_sol[worker].insert(new_sol[worker].begin() + place, job); 
+        jobs_number--;
+
+    }
+
+    return new_sol;
+}
+
+vector < vector < int > >ProblemInstance::remove_jobs(int jobs_number){
+    auto new_sol = solution;
+    int  worker, place, tries;
+
+    while(jobs_number > 0){
+
+        tries = 0;
+
+        do{
+            worker = rand() % solution.size();
+        }while(tries++ < MAX_TRIES && new_sol[worker].size() == 0);
+
+
+
+        if( tries > MAX_TRIES){
+            jobs_number--;
+            continue;
+        }
+
+        place = rand() % (new_sol[worker].size());
+        new_sol[worker].erase(new_sol[worker].begin() + place); 
+        jobs_number--;
+    
+    }
+
+    return new_sol;
+
+
+}
+
+vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int jobs_remove){
+    auto new_sol = solution;
+    int  worker, place, tries, job;
+
+    while(jobs_remove > 0){
+
+        tries = 0;
+
+        do{
+            worker = rand() % solution.size();
+        }while(tries++ < MAX_TRIES && new_sol[worker].size() == 0);
+
+
+
+        if( tries >= MAX_TRIES){
+            jobs_remove--;
+            continue;
+        }
+
+        place = rand() % (new_sol[worker].size());
+        new_sol[worker].erase(new_sol[worker].begin() + place); 
+        jobs_remove--;
+    }
+
+    while(jobs_add > 0){
+        
+        tries = 0;
+        do{
+
+            worker = rand() % solution.size();
+        }while(tries++ < MAX_TRIES && new_sol[worker].size() >= tasks_size);
+        tries = 0;
+        do{
+
+            job = rand() % tasks_size;
+        }while(tries++ < MAX_TRIES && find(new_sol[worker].begin(), new_sol[worker].end(), job) != new_sol[worker].end());//dont add job that actually is in worker list
+        if( tries >= MAX_TRIES){
+            jobs_add--;
+            continue;
+        }
+        place = rand() % (new_sol[worker].size() + 1);
+
+        new_sol[worker].insert(new_sol[worker].begin() + place, job); 
+        jobs_add--;
+
+    }
+
+
+
+    return new_sol;
+
+
+}
+
+
+
+
+
 void ProblemInstance:: get_neighbours(){
      neighbours.clear();
-    for(int i = 0 ; i < 10 ; i++){
+    for(int i = 0 ; i < 50 ; i++){
         neighbours.push_back(swap_workers());
+        neighbours.push_back(add_jobs( 1 + rand() % 8));
+        neighbours.push_back(remove_jobs( 1 + rand() % 5));
+        neighbours.push_back(add_and_remove_jobs( 1 + rand() % 10, 1 + rand() % 10));                
     }
 
 }
 
-    void ProblemInstance:: search_randomly(){
+    void ProblemInstance:: search_randomly(int how_many){
+        while(how_many-- > 0){
         get_neighbours();
         auto temp = solution;
         float temp_cost = cost;
@@ -277,13 +419,22 @@ void ProblemInstance:: get_neighbours(){
             temp = solution;
             temp_cost = cost;
             solution = *it;
-            if(analyze_solution() && temp_cost <= cost)
+            //show_solution();
+            if(analyze_solution() && temp_cost > cost){// new better found
 
                 continue;
-            else
-                solution = temp;
+            }
+
+            else{
+                solution = temp; // return to previous;
+                cost =temp_cost;
+            }
+
 
         }
 
+
+
+        }
 
     }
