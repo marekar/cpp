@@ -19,6 +19,10 @@ private:
     int employees_amount;
     int tasks_size;
     float cost;
+    vector<vector<int>> gantt_worker_jobs;
+    vector<vector<float>> gantt_worker_time;
+
+
     float get_resolving_time(int worker_number, int task_number);
     float get_time_for_many(vector<int> worker_list, int task_number);
     float get_time_for_one(int worker_number, int task_number);
@@ -48,6 +52,8 @@ public:
 
     void show_solution(   vector < vector < int > > & sol = null_sol);
     void show_workers();
+
+    void log_gantt_chart();
 
     ~ProblemInstance();
 };

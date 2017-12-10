@@ -56,15 +56,15 @@ int main()
 
     time(&start);
     time(&my_time);
-    while(difftime(my_time,start) < 10){
+    while(difftime(my_time,start) < 3){
     BigProblem.search_randomly(10);
     time(&my_time);
     }
 
     BigProblem.show_solution();  
     cout << endl << "after all iterations final cost : " << BigProblem.get_cost();
-
-
+    BigProblem.analyze_solution();
+    BigProblem.log_gantt_chart();
 
     return 0;
 }
