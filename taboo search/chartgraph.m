@@ -3,7 +3,7 @@
 close all;
 clear all;
 
-output = importdata('output2.csv');
+output = importdata('output_duzy.csv');
 [rows, cols] = size(output.data);
 workers_amount = (rows)/2; %iloœæ pracowników
 
@@ -13,9 +13,13 @@ solution2 = output.data(1:1:workers_amount,:);
 tasks = output.data(workers_amount + 1 :1: workers_amount*2,:);
 problems_amount = max(max(tasks)); %iloœæ problemów
 
-for i = 2:cols
-    for j = 1:workers_amount
-        solution(j,i) = solution(j,i-1)+solution(j,i);
+max_time = solution(1,1);
+for i = 1:workers_amount
+    for n = 2:1:cols
+        solution(i,n) = solution(i,n-1)+solution(i,n);
+        if solution(i, n) > max_time
+            max_time = solution(i, n);
+        end
     end
 end
 
@@ -26,11 +30,12 @@ hold on;
 ylabel('workers');
 xlabel('time');
 set(gca, 'YDir', 'reverse', 'YTickLabel', workers);
+yticklabels('auto');
 color = [1 1 1];
 
 
 
-for j = 1:cols-1
+for j = 0:cols-1
     H = solution(:,cols - j);
     for i = 1:N
         hold on;
@@ -43,7 +48,7 @@ for j = 1:cols-1
         elseif tasks(i, cols - j) == 2
             color = [0.7 0 0];
         elseif tasks(i, cols - j) == 3
-            color = [0.4 0 0 ];
+            color = [0.4 0.6 0.4 ];
         elseif tasks(i, cols - j) == 4
             color = [0 1 0];
         elseif tasks(i, cols - j) == 5
@@ -53,7 +58,7 @@ for j = 1:cols-1
         elseif tasks(i, cols - j) == 7
             color = [0 0 1];   
         elseif tasks(i, cols - j) == 8
-            color = [0 0 0.7];   
+            color = [0.5 0.5 0.5];   
         elseif tasks(i, cols - j) == 9
             color = [0 0 0.4];   
         elseif tasks(i, cols - j) == 10
@@ -98,7 +103,7 @@ for j = 1:cols-1
     end
    
 end
-axis([0 9 0.5 9.5]);
+axis([0 max_time 0.5 workers_amount+0.5]);
 hold off;
 
 
