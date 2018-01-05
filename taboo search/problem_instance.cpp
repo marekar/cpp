@@ -9,9 +9,13 @@ ProblemInstance ::ProblemInstance(Worker *workers_list, int workers_size, Proble
     this->tasks_size = tasks_size;
     this->employees_amount = workers_amount;
     this->solution = vector< vector<int> >(employees_amount, vector<int>(tasks_size, 0));
-
+    cost = 99999999999.0;
+    best_cost_ever = 99999999999.0;
     gantt_worker_jobs = vector<vector<int>>(employees_amount, vector<int>());
     gantt_worker_time =  vector<vector<float>>(employees_amount, vector<float>());
+        cout << "checking";
+    taboo_list = TabooList(TABOO_SIZE);
+    cout << "checking";
 }
 
 ProblemInstance ::~ProblemInstance()
@@ -71,7 +75,7 @@ void ProblemInstance::build_first_solution(){
 
 
 
-bool ProblemInstance::analyze_solution()
+bool ProblemInstance::analyze_solution(vector<vector<int>> & sol)
 {
 
     vector<vector<int>> shared_job_vector = vector<vector<int>>(tasks_size + 1, vector<int>());
@@ -81,7 +85,7 @@ bool ProblemInstance::analyze_solution()
     gantt_worker_time =  vector<vector<float>>(employees_amount, vector<float>()); 
     vector<float> worker_time = vector<float>(employees_amount, 0.0);
     int j = 0;
-    for (auto it = solution.begin(); it != solution.end(); it++)
+    for (auto it = sol.begin(); it != sol.end(); it++)
     {
 
         for (auto it_ins = (*it).begin(); it_ins != (*it).end(); it_ins++)
@@ -106,7 +110,7 @@ bool ProblemInstance::analyze_solution()
     }
 
     auto shared_job_vector_copy = shared_job_vector;
-    auto solution_copy = solution;
+    auto sol_copy = sol;
     int job_number;
     bool changes_appeared;
 
@@ -114,7 +118,7 @@ bool ProblemInstance::analyze_solution()
     while (not_resolved_jobs > 0)
     {
         changes_appeared = false;
-        for (auto it = solution_copy.begin(); it != solution_copy.end(); it++)
+        for (auto it = sol_copy.begin(); it != sol_copy.end(); it++)
         {
             while ((*it).size() > 0 and shared_job_vector.at((*it).at(0)).size() == 1)
             { //check if is this job for one person
@@ -135,7 +139,7 @@ bool ProblemInstance::analyze_solution()
                 for (auto job_it = shared_job_vector.at((*it)[0]).begin(); job_it != shared_job_vector.at((*it)[0]).end(); job_it++)
                 {
 
-                    if (solution_copy[*job_it][0] != (*it)[0])
+                    if (sol_copy[*job_it][0] != (*it)[0])
                     { //skip, other workers are still working
                         is_ready_to_shared_job = false;
                         break;
@@ -168,7 +172,7 @@ bool ProblemInstance::analyze_solution()
                         gantt_worker_jobs[*job_it].push_back(job_number);
                             
                         worker_time.at(*job_it) = job_finish_time;
-                        solution_copy.at(*job_it).erase(solution_copy.at(*job_it).begin()); 
+                        sol_copy.at(*job_it).erase(sol_copy.at(*job_it).begin()); 
                     }
                 }
             }
@@ -179,7 +183,7 @@ bool ProblemInstance::analyze_solution()
         }
 
         not_resolved_jobs = 0;
-        for (auto debug_it = solution_copy.begin(); debug_it != solution_copy.end(); debug_it++)
+        for (auto debug_it = sol_copy.begin(); debug_it != sol_copy.end(); debug_it++)
         {
 
             for (auto debug2_it = (*debug_it).begin(); debug2_it != (*debug_it).end(); debug2_it++)
@@ -274,6 +278,7 @@ vector < vector < int > >ProblemInstance:: swap_workers(){
     auto swapped = solution;
     int v1 = 0, v2 = 0;
     auto temp = solution[0];
+    TabooMove new_move;
     while(v1 == v2){
         v1 = rand() % solution.size();
         v2 = rand() % solution.size();
@@ -282,14 +287,15 @@ vector < vector < int > >ProblemInstance:: swap_workers(){
     temp = swapped[v1];
     swapped[v1] = swapped[v2];
     swapped[v2] = temp;
-
+    new_move.swapped.push_back(make_pair(v1 < v2 ? v1 : v2 , v1 < v2 ? v2 : v1));
+    last_move = new_move;
     return swapped;
 }
 
 vector < vector < int > >ProblemInstance::add_jobs(int jobs_number){
     auto new_sol = solution;
     int job, worker, place, tries;
-
+    TabooMove new_move;
     while(jobs_number > 0){
         
         tries = 0;
@@ -306,17 +312,18 @@ vector < vector < int > >ProblemInstance::add_jobs(int jobs_number){
         place = rand() % (new_sol[worker].size() + 1);
 
         new_sol[worker].insert(new_sol[worker].begin() + place, job); 
+        new_move.added.push_back(make_pair(worker,place));
         jobs_number--;
 
     }
-
+    last_move = new_move;
     return new_sol;
 }
 
 vector < vector < int > >ProblemInstance::remove_jobs(int jobs_number){
     auto new_sol = solution;
     int  worker, place, tries;
-
+    TabooMove new_move;
     while(jobs_number > 0){
 
         tries = 0;
@@ -334,10 +341,11 @@ vector < vector < int > >ProblemInstance::remove_jobs(int jobs_number){
 
         place = rand() % (new_sol[worker].size());
         new_sol[worker].erase(new_sol[worker].begin() + place); 
+        new_move.deleted.push_back(make_pair(worker,place));
         jobs_number--;
     
     }
-
+    last_move = new_move;
     return new_sol;
 
 
@@ -346,7 +354,7 @@ vector < vector < int > >ProblemInstance::remove_jobs(int jobs_number){
 vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int jobs_remove){
     auto new_sol = solution;
     int  worker, place, tries, job;
-
+    TabooMove new_move;
     while(jobs_remove > 0){
 
         tries = 0;
@@ -364,6 +372,7 @@ vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int 
         place = rand() % (new_sol[worker].size());
         new_sol[worker].erase(new_sol[worker].begin() + place); 
         jobs_remove--;
+        new_move.deleted.push_back(make_pair(worker,place));
     }
 
     while(jobs_add > 0){
@@ -384,10 +393,11 @@ vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int 
         place = rand() % (new_sol[worker].size() + 1);
 
         new_sol[worker].insert(new_sol[worker].begin() + place, job); 
+        new_move.added.push_back(make_pair(worker,place));
         jobs_add--;
 
     }
-
+    last_move = new_move;
     return new_sol;
 
 }
@@ -425,14 +435,32 @@ void ProblemInstance::log_gantt_chart(){
 }
 
 
-void ProblemInstance:: get_neighbours(){
+void ProblemInstance:: get_neighbours(int how_many){
      neighbours.clear();
-    for(int i = 0 ; i < 50 ; i++){
+    for(int i = 0 ; i < how_many ; i++){
         neighbours.push_back(swap_workers());
-        neighbours.push_back(add_jobs( 1 + rand() % 8));
-        neighbours.push_back(remove_jobs( 1 + rand() % 5));
-        neighbours.push_back(add_and_remove_jobs( 1 + rand() % 10, 1 + rand() % 10));                
+        neighbours.push_back(add_jobs( 1 + rand() % 4));
+        neighbours.push_back(remove_jobs( 1 + rand() % 3));
+        neighbours.push_back(add_and_remove_jobs( 1 + rand() % 3, 1 + rand() % 3));                
     }
+
+}
+void ProblemInstance :: get_one_neighbour(){
+    float probability = (rand() % 1000) / 1000.0;
+
+    neighbours.clear();
+    if (probability < ADD_THRESHOLD){
+        neighbours.push_back(add_jobs( 1 + rand() % 3));      
+    }    
+    else if(probability < REMOVE_THRESHOLD ){
+        neighbours.push_back(remove_jobs( 1 + rand() % 3));        
+    }
+        else if(probability < ADD_AND_REMOVE_THRESHOLD ){
+            neighbours.push_back(add_and_remove_jobs( 1 + rand() % 3, 1 + rand() % 3));      
+    }
+        else{
+            neighbours.push_back(swap_workers());
+        }
 
 }
 
@@ -446,15 +474,46 @@ void ProblemInstance:: get_neighbours(){
             temp_cost = cost;
             solution = *it;
             //show_solution();
-            if(analyze_solution() && temp_cost > cost){// new better found
+            if(analyze_solution(solution) && temp_cost > cost){// new better found
 
                 continue;
             }
 
             else{
                 solution = temp; // return to previous;
-            cost =temp_cost;
+            cost = temp_cost;
             }
         }
         }
     }
+
+void ProblemInstance :: step(){
+    float temp_cost, this_step_best_cost;
+    int i = 0;
+    temp_cost = cost;
+    this_step_best_cost = 9999999999.0;
+
+    while(i++ < NEIGHBOUR_SIZE){
+        get_one_neighbour();
+        if(taboo_list.is_on_list(last_move)){
+            //analyze_solution(neighbours[0]);
+            //kryterium aspiracji
+        }
+        else{
+            if(analyze_solution(neighbours[0])){
+                if(cost < this_step_best_cost){
+                    
+                    this_step_best_cost = cost;
+                    solution = neighbours[0];
+                    taboo_list.add(last_move);
+                }
+            }
+        }
+    }
+
+    if( this_step_best_cost < best_cost_ever ){
+        best_solution = solution;
+        best_cost_ever = this_step_best_cost;
+    }
+}
+

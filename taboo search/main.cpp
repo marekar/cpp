@@ -31,19 +31,11 @@ int main()
     show_workers((BigProblem.employees));
     show_problems(problems);
 
-    // vector<vector<int>> example_solution = vector<vector<int>>(workers_amount, vector<int>(problems_amount, 0));
-
-    // if (!read_solution_data(example_solution, workers_amount, problems_amount))
-    // {
-    //     return -1;
-    // }
-    
-    // BigProblem.solution = example_solution;
     BigProblem.show_workers();
     
     BigProblem.build_first_solution();
 
-    if (BigProblem.analyze_solution())
+    if (BigProblem.analyze_solution(BigProblem.solution))
     {
         cout << "obliczono koszt rozwiazania!" << endl;
     }
@@ -57,17 +49,20 @@ int main()
     time(&start);
     time(&my_time);
     while(difftime(my_time,start) < 3){
-    BigProblem.search_randomly(10);
+    BigProblem.step();
     time(&my_time);
     }
 
-    BigProblem.show_solution();  
-    cout << endl << "after all iterations final cost : " << BigProblem.get_cost();
-    BigProblem.analyze_solution();
+    BigProblem.show_best_solution();  
+    cout << endl << "after all iterations final cost : " << BigProblem.get_best_cost();
+    BigProblem.analyze_solution(BigProblem.solution);
     BigProblem.log_gantt_chart();
-
+    BigProblem.taboo_list.show_hitlist();
     return 0;
 }
+
+
+
 
 void show_workers(Worker *workers)
 {

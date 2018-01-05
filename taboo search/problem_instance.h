@@ -8,6 +8,7 @@
 #include <vector>
 #include <algorithm>
 #include "consts.h"
+#include "taboo.h"
 
 using namespace std;
 
@@ -17,11 +18,15 @@ class ProblemInstance
 private:
 
     int employees_amount;
+
     int tasks_size;
     float cost;
+    float best_cost_ever;
+
     vector<vector<int>> gantt_worker_jobs;
     vector<vector<float>> gantt_worker_time;
 
+    TabooMove last_move;
 
     float get_resolving_time(int worker_number, int task_number);
     float get_time_for_many(vector<int> worker_list, int task_number);
@@ -32,27 +37,32 @@ private:
     vector < vector < int > >add_jobs(int jobs_number = 1);
     vector < vector < int > >remove_jobs(int jobs_number = 1);
     vector < vector < int > >add_and_remove_jobs(int jobs_add, int jobs_remove);
+    void get_one_neighbour();
+    void get_neighbours(int how_many = 10);
 
-    void get_neighbours();
 public:
+    TabooList taboo_list;
     static vector < vector < int > > null_sol;
     Worker * employees;
     Problem * tasks;
     float get_cost(){return cost;}
-
+    float get_best_cost(){return best_cost_ever;}
     vector < vector < int > > solution;
+    vector < vector < int > > best_solution;
+
     vector <vector < vector < int > >> neighbours;
 
     ProblemInstance(Worker * workers_list, int workers_size, Problem * tasks_list, int tasks_size);
 
     void search_randomly(int how_many);
 
-    bool analyze_solution( );
+    bool analyze_solution( vector<vector<int>> & sol);
     void build_first_solution();
 
     void show_solution(   vector < vector < int > > & sol = null_sol);
+    void show_best_solution(){ show_solution(best_solution);}
     void show_workers();
-
+    void step();
     void log_gantt_chart();
 
     ~ProblemInstance();
