@@ -18,7 +18,8 @@ class ProblemInstance
 private:
 
     int employees_amount;
-
+    long int correct_generated;
+    long int incorrect_generated;
     int tasks_size;
     float cost;
     float best_cost_ever;

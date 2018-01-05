@@ -11,12 +11,14 @@ ProblemInstance ::ProblemInstance(Worker *workers_list, int workers_size, Proble
     this->solution = vector< vector<int> >(employees_amount, vector<int>(tasks_size, 0));
     cost = 99999999999.0;
     best_cost_ever = 99999999999.0;
+    correct_generated = 0;
+    incorrect_generated = 0;
     gantt_worker_jobs = vector<vector<int>>(employees_amount, vector<int>());
     gantt_worker_time =  vector<vector<float>>(employees_amount, vector<float>());
-        cout << "checking";
+
     taboo_list = TabooList(TABOO_SIZE);
-    cout << "checking";
-}
+}   
+
 
 ProblemInstance ::~ProblemInstance()
 {
@@ -70,7 +72,8 @@ void ProblemInstance::build_first_solution(){
     }
     delete[] workers_current_time;
     cost = total_cost;
-
+    best_cost_ever = cost;
+    cout << cost;
 }
 
 
@@ -92,8 +95,11 @@ bool ProblemInstance::analyze_solution(vector<vector<int>> & sol)
         {
             if (*it_ins != 0)
             {
-                if (count((*it).begin(), (*it).end(), *it_ins) > 1) //same job assigned to one worker many times
+                if (count((*it).begin(), (*it).end(), *it_ins) > 1){
+                    cost = 10e+20;
                     return false;
+                } //same job assigned to one worker many times
+
 
                 shared_job_vector.at(*it_ins).push_back(j);
             }
@@ -105,8 +111,11 @@ bool ProblemInstance::analyze_solution(vector<vector<int>> & sol)
     shared_job_vector.at(0).insert(shared_job_vector.at(0).begin(), 0);
 
     for(auto it = shared_job_vector.begin() ; it != shared_job_vector.end() ; it++){
-        if((*it).size() == 0)
-            return false; //not all jobs are assigned
+        if((*it).size() == 0){
+                cost = 10e+20;
+                return false; //not all jobs are assigned
+        }
+
     }
 
     auto shared_job_vector_copy = shared_job_vector;
@@ -179,6 +188,7 @@ bool ProblemInstance::analyze_solution(vector<vector<int>> & sol)
         }
         if (!changes_appeared)
         { // deadlock detected
+            cost = 10e+20;
             return false;
         }
 
@@ -450,13 +460,13 @@ void ProblemInstance :: get_one_neighbour(){
 
     neighbours.clear();
     if (probability < ADD_THRESHOLD){
-        neighbours.push_back(add_jobs( 1 + rand() % 3));      
+        neighbours.push_back(add_jobs( 1 + rand() % 5));      
     }    
     else if(probability < REMOVE_THRESHOLD ){
-        neighbours.push_back(remove_jobs( 1 + rand() % 3));        
+        neighbours.push_back(remove_jobs( 1 + rand() % 2));        
     }
         else if(probability < ADD_AND_REMOVE_THRESHOLD ){
-            neighbours.push_back(add_and_remove_jobs( 1 + rand() % 3, 1 + rand() % 3));      
+            neighbours.push_back(add_and_remove_jobs( 1 + rand() % 6, 1 + rand() % 6));      
     }
         else{
             neighbours.push_back(swap_workers());
@@ -490,30 +500,50 @@ void ProblemInstance :: get_one_neighbour(){
 void ProblemInstance :: step(){
     float temp_cost, this_step_best_cost;
     int i = 0;
+    bool acceptable;
+    // iterations++;
     temp_cost = cost;
     this_step_best_cost = 9999999999.0;
 
     while(i++ < NEIGHBOUR_SIZE){
         get_one_neighbour();
-        if(taboo_list.is_on_list(last_move)){
-            //analyze_solution(neighbours[0]);
-            //kryterium aspiracji
+        acceptable = analyze_solution(neighbours[0]);
+
+        if(acceptable){
+            correct_generated++;
+            if(taboo_list.is_on_list(last_move)){
+                if(cost < best_cost_ever ){//kryterium aspiracji
+                    cout << endl << "kryterium aspiracji! " << cost;
+                    this_step_best_cost = cost;
+                    solution = neighbours[0];        
+                    taboo_list.add(last_move);
+
+                    best_solution = solution;
+                    best_cost_ever = this_step_best_cost;        
+                }
+
         }
         else{
-            if(analyze_solution(neighbours[0])){
                 if(cost < this_step_best_cost){
                     
                     this_step_best_cost = cost;
                     solution = neighbours[0];
                     taboo_list.add(last_move);
                 }
-            }
+            
         }
+        }else{
+            incorrect_generated++;
+            //not acceptable
+        }
+        
     }
 
     if( this_step_best_cost < best_cost_ever ){
         best_solution = solution;
         best_cost_ever = this_step_best_cost;
+        cout << endl << "new cost: " << best_cost_ever;
     }
+    // cout << endl << this_step_best_cost;
 }
 

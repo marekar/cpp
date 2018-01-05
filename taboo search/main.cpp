@@ -35,20 +35,14 @@ int main()
     
     BigProblem.build_first_solution();
 
-    if (BigProblem.analyze_solution(BigProblem.solution))
-    {
-        cout << "obliczono koszt rozwiazania!" << endl;
-    }
-    else
-    {
-        cout << "rozwiazanie zabronione!";
-    }
-
+    BigProblem.analyze_solution(BigProblem.solution);
+   
     BigProblem.show_solution();
 
     time(&start);
     time(&my_time);
-    while(difftime(my_time,start) < 3){
+
+    while(difftime(my_time,start) < 10){
     BigProblem.step();
     time(&my_time);
     }
