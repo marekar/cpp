@@ -42,7 +42,7 @@ int main()
     time(&start);
     time(&my_time);
 
-    while(difftime(my_time,start) < 20){
+    while(difftime(my_time,start) < 120){
     BigProblem.step();
     time(&my_time);
     }

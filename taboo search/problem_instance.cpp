@@ -62,10 +62,7 @@ void ProblemInstance::build_first_solution(){
         for(int j = 0 ; j < workers_amount ; j ++){
             if(get_penalty(i + 1,get_time_for_one(j, i + 1) + workers_current_time[j]) < one_task_cost){
                 best_worker_for_task = j;
-                // cout << endl << "task " << i + 1 << " best worker " << j;
-
                 one_task_cost = get_penalty(i + 1,get_time_for_one(j, i + 1) + workers_current_time[j]);
-                // cout << endl << "task " << i + 1 << " best worker " << j << "cost " << one_task_cost;                
             }
 
         }
@@ -611,12 +608,12 @@ void ProblemInstance :: step(){
     if(this_step_best_cost < 100000)
         cost_data_for_plot.push_back(this_step_best_cost); 
     else
-        cost_data_for_plot.push_back(0.0);         
+        cost_data_for_plot.push_back(0.0);
+                 
     if( this_step_best_cost < best_cost_ever ){
         best_solution = solution;
         best_cost_ever = this_step_best_cost;
         cout << endl << "new cost: " << best_cost_ever;
     }
-    // cout << endl << this_step_best_cost;
 }
 
