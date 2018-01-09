@@ -33,11 +33,13 @@ private:
     float get_time_for_many(vector<int> worker_list, int task_number);
     float get_time_for_one(int worker_number, int task_number);
     float get_penalty(int task_number, float finish_time);  
-
+    vector < float > cost_data_for_plot; 
     vector < vector < int > >swap_workers();
     vector < vector < int > >add_jobs(int jobs_number = 1);
     vector < vector < int > >remove_jobs(int jobs_number = 1);
     vector < vector < int > >add_and_remove_jobs(int jobs_add, int jobs_remove);
+    vector < vector < int > >take_from_another_worker(int jobs_number);
+    vector < vector < int > >give_job_to_lazy_worker();
     void get_one_neighbour();
     void get_neighbours(int how_many = 10);
 

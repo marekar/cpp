@@ -9,13 +9,13 @@ ProblemInstance ::ProblemInstance(Worker *workers_list, int workers_size, Proble
     this->tasks_size = tasks_size;
     this->employees_amount = workers_amount;
     this->solution = vector< vector<int> >(employees_amount, vector<int>(tasks_size, 0));
-    cost = 99999999999.0;
-    best_cost_ever = 99999999999.0;
+    cost = BIG_NUMBER;
+    best_cost_ever = BIG_NUMBER;
     correct_generated = 0;
     incorrect_generated = 0;
     gantt_worker_jobs = vector<vector<int>>(employees_amount, vector<int>());
     gantt_worker_time =  vector<vector<float>>(employees_amount, vector<float>());
-
+    cost_data_for_plot = vector< float>();
     taboo_list = TabooList(TABOO_SIZE);
 }   
 
@@ -36,7 +36,10 @@ void ProblemInstance::show_solution(vector < vector < int > > & sol){
         for(auto it = sol.at(i).begin(); it != sol.at(i).end() ; it++)
             cout << *it <<"\t";
     }
-
+    if( correct_generated != 0){
+        cout << endl << "correct generated: " << correct_generated << " it's "
+         << 100.0 * correct_generated/ (correct_generated + incorrect_generated) << "% of all "<<endl;
+    }
 }
 void ProblemInstance::show_workers(){
     for(int i = 0 ; i < employees_amount ;i++){
@@ -54,7 +57,7 @@ void ProblemInstance::build_first_solution(){
 
     solution = vector<vector<int>>(employees_amount, vector<int>());
     for(int i = 0 ; i < tasks_size ; i++){
-        one_task_cost = 9999999999.0;
+        one_task_cost = BIG_NUMBER;
         best_worker_for_task = 0;
         for(int j = 0 ; j < workers_amount ; j ++){
             if(get_penalty(i + 1,get_time_for_one(j, i + 1) + workers_current_time[j]) < one_task_cost){
@@ -96,7 +99,7 @@ bool ProblemInstance::analyze_solution(vector<vector<int>> & sol)
             if (*it_ins != 0)
             {
                 if (count((*it).begin(), (*it).end(), *it_ins) > 1){
-                    cost = 10e+20;
+                    cost = BIG_NUMBER;
                     return false;
                 } //same job assigned to one worker many times
 
@@ -112,7 +115,7 @@ bool ProblemInstance::analyze_solution(vector<vector<int>> & sol)
 
     for(auto it = shared_job_vector.begin() ; it != shared_job_vector.end() ; it++){
         if((*it).size() == 0){
-                cost = 10e+20;
+                cost = BIG_NUMBER;
                 return false; //not all jobs are assigned
         }
 
@@ -188,7 +191,7 @@ bool ProblemInstance::analyze_solution(vector<vector<int>> & sol)
         }
         if (!changes_appeared)
         { // deadlock detected
-            cost = 10e+20;
+            cost = BIG_NUMBER;
             return false;
         }
 
@@ -322,7 +325,7 @@ vector < vector < int > >ProblemInstance::add_jobs(int jobs_number){
         place = rand() % (new_sol[worker].size() + 1);
 
         new_sol[worker].insert(new_sol[worker].begin() + place, job); 
-        new_move.added.push_back(make_pair(worker,place));
+        new_move.added.push_back(make_pair(worker,job));
         jobs_number--;
 
     }
@@ -330,6 +333,33 @@ vector < vector < int > >ProblemInstance::add_jobs(int jobs_number){
     return new_sol;
 }
 
+
+vector < vector < int > >ProblemInstance::take_from_another_worker(int jobs_number){
+    auto new_sol = solution;
+    int job, worker1, worker2, place, tries;
+    TabooMove new_move;
+    while(jobs_number > 0){
+
+        tries = 0;
+        do{
+            worker1 = rand() % solution.size();
+            worker2 = rand() % solution.size();
+        }while(tries++ < MAX_TRIES && ( ( worker1 == worker2) || new_sol[worker1].size() == 0) );
+    
+        job = new_sol[worker1][rand() % (new_sol[worker1]).size()];
+
+        place = rand() % (new_sol[worker2].size() + 1);
+
+        new_sol[worker2].insert(new_sol[worker2].begin() + place, job); 
+
+        new_move.added.push_back(make_pair(worker2, job));
+        new_move.deleted.push_back(make_pair(worker1, job));
+        jobs_number--;
+    }
+
+    last_move = new_move;
+    return new_sol;
+}
 vector < vector < int > >ProblemInstance::remove_jobs(int jobs_number){
     auto new_sol = solution;
     int  worker, place, tries;
@@ -350,8 +380,9 @@ vector < vector < int > >ProblemInstance::remove_jobs(int jobs_number){
         }
 
         place = rand() % (new_sol[worker].size());
+        
         new_sol[worker].erase(new_sol[worker].begin() + place); 
-        new_move.deleted.push_back(make_pair(worker,place));
+        new_move.deleted.push_back(make_pair(worker, new_sol[worker][place]));
         jobs_number--;
     
     }
@@ -361,6 +392,37 @@ vector < vector < int > >ProblemInstance::remove_jobs(int jobs_number){
 
 }
 
+vector < vector < int > >ProblemInstance::give_job_to_lazy_worker(){
+    auto new_sol = solution;
+    int laziest_worker, hardest_working_worker, job;
+    int biggest_task_amount = 0;
+    int smallest_task_amount = BIG_NUMBER;
+    TabooMove new_move;
+
+    laziest_worker = -1;
+    for(auto it = new_sol.begin(); it !=new_sol.end() ; it++){
+        if((*it).size() < smallest_task_amount ){
+            laziest_worker = distance(new_sol.begin(), it);
+            smallest_task_amount = (*it).size();
+        }
+        if((*it).size() > biggest_task_amount){
+            hardest_working_worker = distance(new_sol.begin(), it);
+            biggest_task_amount = (*it).size();
+        }
+    }
+    if(laziest_worker != -1 && biggest_task_amount > 0){
+        job = *(new_sol[hardest_working_worker].end() - 1);
+        new_sol[laziest_worker].push_back(job);
+        new_sol[hardest_working_worker].erase(new_sol[hardest_working_worker].end() - 1);
+        last_move.added.push_back(make_pair(hardest_working_worker, job));
+        last_move.deleted.push_back(make_pair(laziest_worker, job));        
+    }
+ 
+    last_move = new_move;
+    return new_sol;
+
+
+}
 vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int jobs_remove){
     auto new_sol = solution;
     int  worker, place, tries, job;
@@ -382,7 +444,7 @@ vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int 
         place = rand() % (new_sol[worker].size());
         new_sol[worker].erase(new_sol[worker].begin() + place); 
         jobs_remove--;
-        new_move.deleted.push_back(make_pair(worker,place));
+        new_move.deleted.push_back(make_pair(worker,job));
     }
 
     while(jobs_add > 0){
@@ -403,7 +465,7 @@ vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int 
         place = rand() % (new_sol[worker].size() + 1);
 
         new_sol[worker].insert(new_sol[worker].begin() + place, job); 
-        new_move.added.push_back(make_pair(worker,place));
+        new_move.added.push_back(make_pair(worker,job));
         jobs_add--;
 
     }
@@ -442,6 +504,9 @@ void ProblemInstance::log_gantt_chart(){
             it_job++;        
       }
       }
+      for(auto it = cost_data_for_plot.begin() ; it != cost_data_for_plot.end() ; it++)
+            myfile << *it << " ; ";
+    myfile.close();
 }
 
 
@@ -468,10 +533,15 @@ void ProblemInstance :: get_one_neighbour(){
         else if(probability < ADD_AND_REMOVE_THRESHOLD ){
             neighbours.push_back(add_and_remove_jobs( 1 + rand() % 6, 1 + rand() % 6));      
     }
-        else{
+        else if(probability < SWAP_THRESHOLD){
             neighbours.push_back(swap_workers());
         }
-
+        else if(probability < TAKE_THRESHOLD){
+            neighbours.push_back(take_from_another_worker(1));
+        }
+        else if(probability < TO_LAZY_THRESHOLD){
+            neighbours.push_back(give_job_to_lazy_worker());
+        }
 }
 
     void ProblemInstance:: search_randomly(int how_many){
@@ -503,7 +573,7 @@ void ProblemInstance :: step(){
     bool acceptable;
     // iterations++;
     temp_cost = cost;
-    this_step_best_cost = 9999999999.0;
+    this_step_best_cost = BIG_NUMBER;
 
     while(i++ < NEIGHBOUR_SIZE){
         get_one_neighbour();
@@ -538,7 +608,10 @@ void ProblemInstance :: step(){
         }
         
     }
-
+    if(this_step_best_cost < 100000)
+        cost_data_for_plot.push_back(this_step_best_cost); 
+    else
+        cost_data_for_plot.push_back(0.0);         
     if( this_step_best_cost < best_cost_ever ){
         best_solution = solution;
         best_cost_ever = this_step_best_cost;
