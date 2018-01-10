@@ -10,6 +10,8 @@ TabooList::TabooList(int max_size){
     }
     else
         size = 0;
+    
+    last_medium_cost = BIG_NUMBER;
     hitlist = vector<long int>(size, 0);
 
 }
@@ -90,4 +92,11 @@ void TabooList::show_hitlist(){
     }
     cout << endl;
 
+}
+
+vector< vector < int > > TabooList::get_solution_from_medium_memory(){
+    float probability;
+    probability = rand() % mediumList.size();
+    probability = probability * probability * probability / float(mediumList.size() * mediumList.size() );
+    return ( mediumList[mediumList.size() - 1  - int(probability)]);
 }

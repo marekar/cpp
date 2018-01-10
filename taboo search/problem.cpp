@@ -42,14 +42,14 @@ bool read_problem_data(Problem *problems)
         {
             problems[j].requirements[i - j * problem_size] = requirements_tab[i];
         }
-        problems[j].deadline = j + 0.5;
+        //problems[j].deadline = j + 0.5;
     }
 
     return true;
 }
 
 //Funkcja wczytujaca kary dla zadan
-bool read_penalties(Problem *problems)
+bool read_penalties_old(Problem *problems)
 {
     ifstream file;
     int k = 2 * problems_amount;
@@ -73,7 +73,7 @@ bool read_penalties(Problem *problems)
         for (int i = 2 * j; i < 2 * (j + 1); i += 2)
         {
             problems[j].penalty = penalties_tab[i];
-            problems[j].penalty_per_hour = penalties_tab[i];
+
         }
     }
 
@@ -85,5 +85,29 @@ bool read_penalties(Problem *problems)
         }
     }
 
+    return true;
+}
+
+
+bool read_penalties(Problem *problems)
+{
+    ifstream file;
+
+    file.open(file_name_penalty);
+    if (!file.good())
+    {
+        cout << "Nie mozna wczytac pliku penalty_data.txt" << endl;
+        return false;
+    }
+
+    for(int i = 0 ; i < problems_amount ; i++){
+        file >> problems[i].penalty;
+        file >> problems[i].penalty_per_hour;
+        file >> problems[i].deadline; 
+
+        cout << problems[i].penalty << " " << problems[i].penalty_per_hour << " "
+        << problems[i].deadline << endl;
+    }
+    cout << "finished reading ";
     return true;
 }

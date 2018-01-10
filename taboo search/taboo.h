@@ -21,15 +21,24 @@ class TabooMove{
 
 class TabooList{
     vector<TabooMove> shortList;
-    vector<long int> hitlist;
+
+
     int size;
+
+    public:
+
+    vector<long int> hitlist;
+
     long int blocked;
     long int allowed;
-    public:
+
+    vector<vector<vector<int>>> mediumList;
+    float last_medium_cost;
     TabooList(int max_size = TABOO_SIZE);
     void add(TabooMove& move);
     bool is_on_list(TabooMove& move);
     void show_hitlist();
+    vector< vector < int > > get_solution_from_medium_memory(); 
 };
 
 #endif

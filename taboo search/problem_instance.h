@@ -42,7 +42,8 @@ private:
     vector < vector < int > >give_job_to_lazy_worker();
     void get_one_neighbour();
     void get_neighbours(int how_many = 10);
-
+    int iterations_since_new_value_found;
+    int aspiration_used;
 public:
     TabooList taboo_list;
     static vector < vector < int > > null_sol;

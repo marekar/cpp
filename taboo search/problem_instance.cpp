@@ -13,6 +13,7 @@ ProblemInstance ::ProblemInstance(Worker *workers_list, int workers_size, Proble
     best_cost_ever = BIG_NUMBER;
     correct_generated = 0;
     incorrect_generated = 0;
+    aspiration_used = 0;
     gantt_worker_jobs = vector<vector<int>>(employees_amount, vector<int>());
     gantt_worker_time =  vector<vector<float>>(employees_amount, vector<float>());
     cost_data_for_plot = vector< float>();
@@ -313,11 +314,22 @@ vector < vector < int > >ProblemInstance::add_jobs(int jobs_number){
 
             worker = rand() % solution.size();
         }while(tries++ < MAX_TRIES && new_sol[worker].size() >= tasks_size);
+
+        if(tries > MAX_TRIES){
+            last_move = new_move;
+            return new_sol;
+        }
+
         tries = 0;
         do{
 
             job = rand() % tasks_size;
         }while(tries++ < MAX_TRIES && find(new_sol[worker].begin(), new_sol[worker].end(), job) != new_sol[worker].end());//dont add job that actually is in worker list
+       
+       if(tries > MAX_TRIES){
+            last_move = new_move;
+            return new_sol;
+        }
 
         place = rand() % (new_sol[worker].size() + 1);
 
@@ -342,7 +354,12 @@ vector < vector < int > >ProblemInstance::take_from_another_worker(int jobs_numb
             worker1 = rand() % solution.size();
             worker2 = rand() % solution.size();
         }while(tries++ < MAX_TRIES && ( ( worker1 == worker2) || new_sol[worker1].size() == 0) );
-    
+        
+        if(tries > MAX_TRIES){
+            last_move = new_move;
+            return new_sol;
+        }
+
         job = new_sol[worker1][rand() % (new_sol[worker1]).size()];
 
         place = rand() % (new_sol[worker2].size() + 1);
@@ -368,12 +385,9 @@ vector < vector < int > >ProblemInstance::remove_jobs(int jobs_number){
         do{
             worker = rand() % solution.size();
         }while(tries++ < MAX_TRIES && new_sol[worker].size() == 0);
-
-
-
-        if( tries > MAX_TRIES){
-            jobs_number--;
-            continue;
+       if(tries > MAX_TRIES){
+            last_move = new_move;
+            return new_sol;
         }
 
         place = rand() % (new_sol[worker].size());
@@ -432,10 +446,9 @@ vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int 
             worker = rand() % solution.size();
         }while(tries++ < MAX_TRIES && new_sol[worker].size() == 0);
 
-
-        if( tries >= MAX_TRIES){
-            jobs_remove--;
-            continue;
+       if(tries > MAX_TRIES){
+            last_move = new_move;
+            return new_sol;
         }
 
         place = rand() % (new_sol[worker].size());
@@ -455,9 +468,9 @@ vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int 
         do{
             job = rand() % tasks_size;
         }while(tries++ < MAX_TRIES && find(new_sol[worker].begin(), new_sol[worker].end(), job) != new_sol[worker].end());//dont add job that actually is in worker list
-        if( tries >= MAX_TRIES){
-            jobs_add--;
-            continue;
+        if(tries > MAX_TRIES){
+            last_move = new_move;
+            return new_sol;
         }
         place = rand() % (new_sol[worker].size() + 1);
 
@@ -473,7 +486,7 @@ vector < vector < int > >ProblemInstance::add_and_remove_jobs(int jobs_add, int 
 
 void ProblemInstance::log_gantt_chart(){
     ofstream myfile ("output.csv");
-    
+    ofstream statisticfile ("statistic.csv");
       if(myfile.is_open()){
           myfile << "data from algorithm" << endl;
           auto it_time = gantt_worker_time.begin();
@@ -501,8 +514,27 @@ void ProblemInstance::log_gantt_chart(){
             it_job++;        
       }
       }
-      for(auto it = cost_data_for_plot.begin() ; it != cost_data_for_plot.end() ; it++)
-            myfile << *it << " ; ";
+      if(statisticfile.is_open()){
+
+        statisticfile << "Best cost ; " << best_cost_ever << endl;
+        statisticfile << "Neighbours generated ; " << correct_generated + incorrect_generated << endl;
+        statisticfile << "Part of correct neighbours generated ; " << 1.0 * correct_generated / (correct_generated + incorrect_generated) << endl;
+        statisticfile << "Steps done ; " << (correct_generated + incorrect_generated) / NEIGHBOUR_SIZE << endl;
+        statisticfile << "Working time in seconds ; " << WORKING_TIME << endl;
+        statisticfile << "Solutions allowed by taboo list ; " << taboo_list.allowed << endl;
+        statisticfile << "Solutions blocked by taboo list ; " << taboo_list.blocked << endl;   
+        statisticfile << "Aspirations ; " << aspiration_used << endl;
+        statisticfile << "taboo hitlist ; " << endl;
+        for(auto it = taboo_list.hitlist.begin() ; it != taboo_list.hitlist.end() ; it++)
+            statisticfile << *it << " ; ";
+        
+              
+        statisticfile << endl << "Cost history" << endl;
+        for(auto it = cost_data_for_plot.begin() ; it != cost_data_for_plot.end() ; it++)
+            statisticfile << *it << " ; ";
+        
+      }
+
     myfile.close();
 }
 
@@ -522,19 +554,19 @@ void ProblemInstance :: get_one_neighbour(){
 
     neighbours.clear();
     if (probability < ADD_THRESHOLD){
-        neighbours.push_back(add_jobs( 1 + rand() % 5));      
+        neighbours.push_back(add_jobs( 1 + rand() % MAX_ADDED_TASK));      
     }    
     else if(probability < REMOVE_THRESHOLD ){
-        neighbours.push_back(remove_jobs( 1 + rand() % 2));        
+        neighbours.push_back(remove_jobs( 1 + rand() % MAX_REMOVED_TASK));        
     }
         else if(probability < ADD_AND_REMOVE_THRESHOLD ){
-            neighbours.push_back(add_and_remove_jobs( 1 + rand() % 6, 1 + rand() % 6));      
+            neighbours.push_back(add_and_remove_jobs( 1 + rand() % MAX_ADDED_TASK, 1 + rand() % MAX_REMOVED_TASK));      
     }
         else if(probability < SWAP_THRESHOLD){
             neighbours.push_back(swap_workers());
         }
         else if(probability < TAKE_THRESHOLD){
-            neighbours.push_back(take_from_another_worker(1));
+            neighbours.push_back(take_from_another_worker(1 + rand() % MAX_TAKE_FROM_ANOTHER));
         }
         else if(probability < TO_LAZY_THRESHOLD){
             neighbours.push_back(give_job_to_lazy_worker());
@@ -565,11 +597,9 @@ void ProblemInstance :: get_one_neighbour(){
     }
 
 void ProblemInstance :: step(){
-    float temp_cost, this_step_best_cost;
+    float  this_step_best_cost;
     int i = 0;
     bool acceptable;
-    // iterations++;
-    temp_cost = cost;
     this_step_best_cost = BIG_NUMBER;
 
     while(i++ < NEIGHBOUR_SIZE){
@@ -581,6 +611,14 @@ void ProblemInstance :: step(){
             if(taboo_list.is_on_list(last_move)){
                 if(cost < best_cost_ever ){//kryterium aspiracji
                     cout << endl << "kryterium aspiracji! " << cost;
+                    aspiration_used++;
+
+                    if(cost  < taboo_list.last_medium_cost * MEDIUM_APPEND_THRESHOLD){
+                        taboo_list.mediumList.push_back(neighbours[0]);
+                        taboo_list.last_medium_cost = cost;
+                        cout << endl << "appending to medium memory"; 
+                    }
+                    iterations_since_new_value_found = 0;
                     this_step_best_cost = cost;
                     solution = neighbours[0];        
                     taboo_list.add(last_move);
@@ -589,16 +627,16 @@ void ProblemInstance :: step(){
                     best_cost_ever = this_step_best_cost;        
                 }
 
-        }
-        else{
+            }
+            else{
                 if(cost < this_step_best_cost){
                     
                     this_step_best_cost = cost;
                     solution = neighbours[0];
                     taboo_list.add(last_move);
                 }
-            
-        }
+                
+            }
         }else{
             incorrect_generated++;
             //not acceptable
@@ -611,9 +649,22 @@ void ProblemInstance :: step(){
         cost_data_for_plot.push_back(0.0);
                  
     if( this_step_best_cost < best_cost_ever ){
+        iterations_since_new_value_found = 0;
+        if(this_step_best_cost  < taboo_list.last_medium_cost * MEDIUM_APPEND_THRESHOLD){
+            taboo_list.mediumList.push_back(best_solution);
+            taboo_list.last_medium_cost = this_step_best_cost;
+            cout << endl << "appending to medium memory"; 
+        }
         best_solution = solution;
         best_cost_ever = this_step_best_cost;
         cout << endl << "new cost: " << best_cost_ever;
+    }
+    iterations_since_new_value_found++;
+
+    if(iterations_since_new_value_found > MEDIUM_MEMORY_ITERATIONS_THRESHOLD){
+        iterations_since_new_value_found = 0;
+        solution = taboo_list.get_solution_from_medium_memory();
+        cout << endl << "getting solution from medium memory";
     }
 }
 

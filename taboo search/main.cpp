@@ -42,12 +42,13 @@ int main()
     time(&start);
     time(&my_time);
 
-    while(difftime(my_time,start) < 120){
+    while(difftime(my_time,start) < WORKING_TIME){
     BigProblem.step();
     time(&my_time);
     }
 
     BigProblem.show_best_solution();  
+    BigProblem.solution = BigProblem.best_solution;
     cout << endl << "after all iterations final cost : " << BigProblem.get_best_cost();
     BigProblem.analyze_solution(BigProblem.solution);
     BigProblem.log_gantt_chart();
