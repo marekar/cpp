@@ -8,25 +8,23 @@
 
 using namespace std;
 
-class TabooMove{
-    public:
+class TabooMove
+{
+  public:
+    vector<pair<int, int>> added;
+    vector<pair<int, int>> deleted;
+    vector<pair<int, int>> swapped;
 
-    vector<pair<int,int>> added;
-    vector<pair<int,int>> deleted;
-    vector<pair<int,int>> swapped;   
-
-    bool is_similar(TabooMove & move);
+    bool is_similar(TabooMove &move);
 };
 
-
-class TabooList{
+class TabooList
+{
     vector<TabooMove> shortList;
-
 
     int size;
 
-    public:
-
+  public:
     vector<long int> hitlist;
 
     long int blocked;
@@ -35,10 +33,10 @@ class TabooList{
     vector<vector<vector<int>>> mediumList;
     float last_medium_cost;
     TabooList(int max_size = TABOO_SIZE);
-    void add(TabooMove& move);
-    bool is_on_list(TabooMove& move);
+    void add(TabooMove &move);
+    bool is_on_list(TabooMove &move);
     void show_hitlist();
-    vector< vector < int > > get_solution_from_medium_memory(); 
+    vector<vector<int>> get_solution_from_medium_memory();
 };
 
 #endif

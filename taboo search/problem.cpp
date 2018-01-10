@@ -73,7 +73,6 @@ bool read_penalties_old(Problem *problems)
         for (int i = 2 * j; i < 2 * (j + 1); i += 2)
         {
             problems[j].penalty = penalties_tab[i];
-
         }
     }
 
@@ -88,7 +87,6 @@ bool read_penalties_old(Problem *problems)
     return true;
 }
 
-
 bool read_penalties(Problem *problems)
 {
     ifstream file;
@@ -100,13 +98,14 @@ bool read_penalties(Problem *problems)
         return false;
     }
 
-    for(int i = 0 ; i < problems_amount ; i++){
+    for (int i = 0; i < problems_amount; i++)
+    {
         file >> problems[i].penalty;
         file >> problems[i].penalty_per_hour;
-        file >> problems[i].deadline; 
+        file >> problems[i].deadline;
 
         cout << problems[i].penalty << " " << problems[i].penalty_per_hour << " "
-        << problems[i].deadline << endl;
+             << problems[i].deadline << endl;
     }
     cout << "finished reading ";
     return true;

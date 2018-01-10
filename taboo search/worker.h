@@ -5,16 +5,15 @@
 #include <fstream>
 #include "consts.h"
 
-
 using namespace std;
 
 class Worker
 {
-public:
+  public:
     int ID;
     int skills[amount_of_skills];
     float teamwork;
-    Worker(int ID_=0);
+    Worker(int ID_ = 0);
     void print_worker_data();
 };
 

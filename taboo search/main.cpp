@@ -2,13 +2,13 @@
 #include "problem.h"
 #include "problem_instance.h"
 #include "consts.h"
-#include <time.h> 
+#include <time.h>
 void show_workers(Worker *workers);
 void show_problems(Problem *problems);
 
 int main()
 {
-    srand (time(NULL));
+    srand(time(NULL));
     Worker *workers;
     Problem *problems;
 
@@ -32,32 +32,31 @@ int main()
     show_problems(problems);
 
     BigProblem.show_workers();
-    
+
     BigProblem.build_first_solution();
 
     BigProblem.analyze_solution(BigProblem.solution);
-   
+
     BigProblem.show_solution();
 
     time(&start);
     time(&my_time);
 
-    while(difftime(my_time,start) < WORKING_TIME){
-    BigProblem.step();
-    time(&my_time);
+    while (difftime(my_time, start) < WORKING_TIME)
+    {
+        BigProblem.step();
+        time(&my_time);
     }
 
-    BigProblem.show_best_solution();  
+    BigProblem.show_best_solution();
     BigProblem.solution = BigProblem.best_solution;
-    cout << endl << "after all iterations final cost : " << BigProblem.get_best_cost();
+    cout << endl
+         << "after all iterations final cost : " << BigProblem.get_best_cost();
     BigProblem.analyze_solution(BigProblem.solution);
     BigProblem.log_gantt_chart();
     BigProblem.taboo_list.show_hitlist();
     return 0;
 }
-
-
-
 
 void show_workers(Worker *workers)
 {

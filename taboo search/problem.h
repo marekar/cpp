@@ -9,7 +9,7 @@ using namespace std;
 
 class Problem
 {
-public:
+  public:
     int problem_ID;
     int requirements[problem_size];
     int deadline;
@@ -17,9 +17,8 @@ public:
     int penalty_per_hour;
 
     void print_problem();
-
 };
 
-bool read_problem_data(Problem * problems);
-bool read_penalties(Problem * problems);
+bool read_problem_data(Problem *problems);
+bool read_penalties(Problem *problems);
 #endif
