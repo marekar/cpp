@@ -25,13 +25,13 @@ void Worker ::print_worker_data()
 
 //Funkcja odczytujaca z pliku wydajnosci pracownikow
 //wypelnia tablice skills[] dla kazdego pracownika
-bool read_worker_data(Worker *workers)
+bool read_worker_data_old(Worker *workers)
 {
     ifstream file;
     int k = amount_of_skills * workers_amount;
     int skill_tab[k];
 
-    file.open(file_name_worker);d
+    file.open(file_name_worker);
     if (!file.good())
     {
         cout << "Nie mozna wczytac pliku worker_data.txt" << endl;
@@ -50,6 +50,30 @@ bool read_worker_data(Worker *workers)
         {
             workers[j].skills[i - j * amount_of_skills] = skill_tab[i];
         }
+    }
+
+    return true;
+}
+
+bool read_worker_data(Worker *workers)
+{
+    ifstream file;
+
+    file.open(file_name_worker);
+    if (!file.good())
+    {
+        cout << "Nie mozna wczytac pliku worker_data.txt" << endl;
+        return false;
+    }
+
+    for (int i = 0; i < workers_amount; i++)
+    {
+        for(int j = 0 ; j < amount_of_skills ; j++){
+            file >> workers[i].skills[j];
+        }
+        file >>  workers[i].teamwork;
+        workers[i].teamwork =  workers[i].teamwork / 100.0;
+        //cout << skill_tab[i];
     }
 
     return true;
