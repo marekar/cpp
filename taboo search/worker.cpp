@@ -9,7 +9,7 @@ Worker ::Worker(int ID_)
     {
         skills[i] = 0;
     }
-    teamwork = 0.85;
+    //teamwork = 0.85;
 }
 
 void Worker ::print_worker_data()
@@ -58,7 +58,6 @@ bool read_worker_data_old(Worker *workers)
 bool read_worker_data(Worker *workers)
 {
     ifstream file;
-
     file.open(file_name_worker);
     if (!file.good())
     {

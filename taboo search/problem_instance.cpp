@@ -38,7 +38,8 @@ void ProblemInstance::show_solution(vector<vector<int>> &sol)
         cout << endl
              << "worker " << i << "__\t ";
         for (auto it = sol.at(i).begin(); it != sol.at(i).end(); it++)
-            cout << *it << "\t";
+            if(*it > 0)
+                cout << *it << "\t";
     }
     if (correct_generated != 0)
     {
@@ -662,13 +663,13 @@ void ProblemInstance ::step()
                     cout << endl
                          << "kryterium aspiracji! " << cost;
                     aspiration_used++;
-
+                    show_solution();
                     if (cost < taboo_list.last_medium_cost * MEDIUM_APPEND_THRESHOLD)
                     {
                         taboo_list.mediumList.push_back(neighbours[0]);
                         taboo_list.last_medium_cost = cost;
                         cout << endl
-                             << "appending to medium memory";
+                             << "appending to medium-term memory";
                     }
                     iterations_since_new_value_found = 0;
                     this_step_best_cost = cost;
@@ -709,12 +710,13 @@ void ProblemInstance ::step()
             taboo_list.mediumList.push_back(best_solution);
             taboo_list.last_medium_cost = this_step_best_cost;
             cout << endl
-                 << "appending to medium memory";
+                 << "appending to medium-term memory";
         }
         best_solution = solution;
         best_cost_ever = this_step_best_cost;
         cout << endl
              << "new cost: " << best_cost_ever;
+             show_solution();
     }
     iterations_since_new_value_found++;
 

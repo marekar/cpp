@@ -9,6 +9,7 @@
 #include <algorithm>
 #include "consts.h"
 #include "taboo.h"
+#include <time.h>
 
 using namespace std;
 
