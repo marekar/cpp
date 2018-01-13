@@ -1,7 +1,7 @@
 amount od skills ; 4
-workers_amount ; 15
-problems_amount ; 40
-ADD_THRESHOLD ; 0.2
+workers_amount ; 10
+problems_amount ; 15
+taboo_size ; 20neighbour_size ; 20ADD_THRESHOLD ; 0.2
 REMOVE_THRESHOLD ; 0.4
 ADD_AND_REMOVE_THRESHOLD ; 0.6
 SWAP_THRESHOLD ; 0.8
