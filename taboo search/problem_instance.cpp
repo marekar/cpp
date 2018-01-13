@@ -677,7 +677,9 @@ void ProblemInstance ::step()
 
     while (i++ < NEIGHBOUR_SIZE)
     {
+        cout << "bg";
         get_one_neighbour();
+                cout << "ag";
         acceptable = analyze_solution(neighbours[0]);
 
         if (acceptable)
