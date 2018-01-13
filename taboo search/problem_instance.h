@@ -70,6 +70,7 @@ class ProblemInstance
     void show_workers();
     void step();
     void log_gantt_chart();
+    void log_consts();
 
     ~ProblemInstance();
 };

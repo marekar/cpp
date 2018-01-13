@@ -577,6 +577,24 @@ void ProblemInstance::log_gantt_chart()
     myfile.close();
 }
 
+voif ProblemInstance::log_consts()
+{
+    ofstream consts_file("consts.csv");
+    if(consts_file.is_open())
+    {
+        consts_file << "amount od skills ; " << amount_of_skills << endl;
+        consts_file << "workers_amount ; " << workers_amount << endl;
+        consts_file << "problems_amount ; " << problems_amount << endl;
+        consts_file << "ADD_THRESHOLD ; " << ADD_THRESHOLD << endl;
+        consts_file << "REMOVE_THRESHOLD ; " << REMOVE_THRESHOLD << endl;
+        consts_file << "ADD_AND_REMOVE_THRESHOLD ; " << ADD_AND_REMOVE_THRESHOLD << endl;
+        consts_file << "SWAP_THRESHOLD ; " << SWAP_THRESHOLD << endl;
+        consts_file << "TAKE_THRESHOLD ; " << TAKE_THRESHOLD << endl;
+        consts_file << "TO_LAZY_THRESHOLD ; " << TO_LAZY_THRESHOLD << endl;   
+    }
+    consts_file.close();
+}
+
 void ProblemInstance::get_neighbours(int how_many)
 {
     neighbours.clear();
