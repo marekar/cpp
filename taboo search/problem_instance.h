@@ -34,6 +34,7 @@ class ProblemInstance
     float get_time_for_one(int worker_number, int task_number);
     float get_penalty(int task_number, float finish_time);
     vector<float> cost_data_for_plot;
+    vector<int> iteration_data_for_plot;
     vector<vector<int>> swap_workers();
     vector<vector<int>> add_jobs(int jobs_number = 1);
     vector<vector<int>> remove_jobs(int jobs_number = 1);
