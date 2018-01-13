@@ -5,26 +5,25 @@
 #define BIG_NUMBER 10e20
 
 //te stale zmienic w momencie modyfikacji pliku z danymi wejsciowymi
-#define amount_of_skills 4 //liczba umiejetnosci jednego pracownika
-#define workers_amount 9*2 //ilosc pracownikow
-#define problems_amount 20 
-#define MAX_TRIES 10
-#define TABOO_SIZE 17
-#define NEIGHBOUR_SIZE 30
-#define WORKING_TIME 600
+#define amount_of_skills 4  //liczba umiejetnosci jednego pracownika
+#define workers_amount 9*2  //ilosc pracownikow
+#define problems_amount 20  //rozmiar problemu
+#define MAX_TRIES 10        
+#define TABOO_SIZE 17       
+#define NEIGHBOUR_SIZE 30   
+#define WORKING_TIME 60    //maksymalny czas
 
-#define MAX_ADDED_TASK 7
-#define MAX_REMOVED_TASK 8
-#define MAX_TAKE_FROM_ANOTHER 6
+#define MAX_ADDED_TASK 7   //max zmian sąsiedztwa 
+#define MAX_REMOVED_TASK 8  
+#define MAX_TAKE_FROM_ANOTHER 6 //przełożenie zadań do innego pracowniak
 
-
-#define NEIGHBOUR_ADD_FACTOR 100.0
+#define NEIGHBOUR_ADD_FACTOR 100.0  //dodawanie sąsiedztwa
 #define NEIGHBOUR_REMOVE_FACTOR 100.0
 #define NEIGHBOUR_ADD_AND_REMOVE_FACTOR 120.0
 #define NEIGHBOUR_SWAP_FACTOR 60.0
 #define NEIGHBOUR_TAKE_FACTOR 150.0
 #define NEIGHBOUR_TO_LAZY_FACTOR 60.0
-#define MEDIUM_APPEND_THRESHOLD 0.9
+#define MEDIUM_APPEND_THRESHOLD 0.9 
 #define MEDIUM_MEMORY_ITERATIONS_THRESHOLD 10000
 
 
