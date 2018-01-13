@@ -1,0 +1,13 @@
+Best cost ; 0
+Neighbours generated ; 887370
+Part of correct neighbours generated ; 0.375794
+Steps done ; 29579
+Working time in seconds ; 60
+Solutions allowed by taboo list ; 248135
+Solutions blocked by taboo list ; 85333
+Aspirations ; 6
+taboo hitlist ; 
+4469 ; 4694 ; 4620 ; 4699 ; 4768 ; 4905 ; 4834 ; 4994 ; 5097 ; 5026 ; 5077 ; 5081 ; 5358 ; 5251 ; 5405 ; 5550 ; 5505 ; 
+Best cost history
+19 ; 19 ; 20 ; 70 ; 70 ; 70 ; 71 ; 71 ; 72 ; 74 ; 79 ; 2201 ; 15765 ; 15766 ; 29579
+4720.57 ; 4717.77 ; 4717.26 ; 3936.59 ; 3932.24 ; 3181.55 ; 3181.51 ; 3179.97 ; 3179.78 ; 3176.31 ; 3172.63 ; 1516.8 ; 1489.15 ; 0 ; 0
