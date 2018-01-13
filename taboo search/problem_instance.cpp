@@ -563,9 +563,15 @@ void ProblemInstance::log_gantt_chart()
             statisticfile << *it << " ; ";
 
         statisticfile << endl
-                      << "Cost history" << endl;
+                      << "Best cost history" << endl;
         for (auto it = cost_data_for_plot.begin(); it != cost_data_for_plot.end(); it++)
             statisticfile << *it << " ; ";
+
+        statisticfile << best_cost_ever << endl;
+
+        for (auto it = iteration_data_for_plot.begin(); it != iteration_data_for_plot.end(); it++)
+            statisticfile << *it << " ; ";  
+         statisticfile << (correct_generated + incorrect_generated) / NEIGHBOUR_SIZE ;     
     }
 
     myfile.close();
@@ -663,6 +669,8 @@ void ProblemInstance ::step()
                     cout << endl
                          << "kryterium aspiracji! " << cost;
                     aspiration_used++;
+                    iteration_data_for_plot.push_back( ( incorrect_generated + correct_generated )/NEIGHBOUR_SIZE );
+                    cost_data_for_plot.push_back(cost);
                     show_solution();
                     if (cost < taboo_list.last_medium_cost * MEDIUM_APPEND_THRESHOLD)
                     {
@@ -683,8 +691,7 @@ void ProblemInstance ::step()
             else
             {
                 if (cost < this_step_best_cost)
-                {
-
+                {                                       
                     this_step_best_cost = cost;
                     solution = neighbours[0];
                     taboo_list.add(last_move);
@@ -697,13 +704,17 @@ void ProblemInstance ::step()
             //not acceptable
         }
     }
-    if (this_step_best_cost < 100000)
-        cost_data_for_plot.push_back(this_step_best_cost);
-    else
-        cost_data_for_plot.push_back(0.0);
+
+    // if (this_step_best_cost < 100000)
+    //     cost_data_for_plot.push_back(this_step_best_cost);
+    // else
+    //     cost_data_for_plot.push_back(0.0);
 
     if (this_step_best_cost < best_cost_ever)
     {
+
+        iteration_data_for_plot.push_back( ( incorrect_generated + correct_generated )/NEIGHBOUR_SIZE );
+        cost_data_for_plot.push_back(this_step_best_cost); 
         iterations_since_new_value_found = 0;
         if (this_step_best_cost < taboo_list.last_medium_cost * MEDIUM_APPEND_THRESHOLD)
         {
