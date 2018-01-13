@@ -52,6 +52,7 @@ int main()
     cout << endl << "after all iterations final cost : " << BigProblem.get_best_cost();
     BigProblem.analyze_solution(BigProblem.solution);
     BigProblem.log_gantt_chart();
+    BigProblem.log_consts();
     BigProblem.taboo_list.show_hitlist();
     return 0;
 }
