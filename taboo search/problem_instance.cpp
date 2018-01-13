@@ -564,14 +564,17 @@ void ProblemInstance::log_gantt_chart()
 
         statisticfile << endl
                       << "Best cost history" << endl;
+
+        for (auto it = iteration_data_for_plot.begin(); it != iteration_data_for_plot.end(); it++)
+            statisticfile << *it << " ; ";  
+        statisticfile << (correct_generated + incorrect_generated) / NEIGHBOUR_SIZE << endl ;     
+        
         for (auto it = cost_data_for_plot.begin(); it != cost_data_for_plot.end(); it++)
             statisticfile << *it << " ; ";
 
         statisticfile << best_cost_ever << endl;
-
-        for (auto it = iteration_data_for_plot.begin(); it != iteration_data_for_plot.end(); it++)
-            statisticfile << *it << " ; ";  
-         statisticfile << (correct_generated + incorrect_generated) / NEIGHBOUR_SIZE ;     
+  
+  
     }
 
     myfile.close();
