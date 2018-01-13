@@ -577,7 +577,7 @@ void ProblemInstance::log_gantt_chart()
     myfile.close();
 }
 
-voif ProblemInstance::log_consts()
+void ProblemInstance::log_consts()
 {
     ofstream consts_file("consts.csv");
     if(consts_file.is_open())
