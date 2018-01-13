@@ -6,15 +6,15 @@
 
 //te stale zmienic w momencie modyfikacji pliku z danymi wejsciowymi
 #define amount_of_skills 4  //liczba umiejetnosci jednego pracownika
-#define workers_amount 15 //ilosc pracownikow
-#define problems_amount 40  //rozmiar problemu
+#define workers_amount 10 //ilosc pracownikow
+#define problems_amount 15  //rozmiar problemu
 #define MAX_TRIES 10        
-#define TABOO_SIZE 100       
-#define NEIGHBOUR_SIZE 100  
-#define WORKING_TIME 300   //maksymalny czas
+#define TABOO_SIZE 60     
+#define NEIGHBOUR_SIZE 15 
+#define WORKING_TIME 60   //maksymalny czas
 
-#define MAX_ADDED_TASK 5   //max zmian sąsiedztwa 
-#define MAX_REMOVED_TASK 5  
+#define MAX_ADDED_TASK 7   //max zmian sąsiedztwa 
+#define MAX_REMOVED_TASK 7  
 #define MAX_TAKE_FROM_ANOTHER 6 //przełożenie zadań do innego pracowniak
 
 #define NEIGHBOUR_ADD_FACTOR 100.0  //dodawanie sąsiedztwa

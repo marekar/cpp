@@ -588,6 +588,8 @@ void ProblemInstance::log_consts()
         consts_file << "amount od skills ; " << amount_of_skills << endl;
         consts_file << "workers_amount ; " << workers_amount << endl;
         consts_file << "problems_amount ; " << problems_amount << endl;
+        consts_file << "taboo_size ; " << TABOO_SIZE;
+        consts_file << "neighbour_size ; " << NEIGHBOUR_SIZE;
         consts_file << "ADD_THRESHOLD ; " << ADD_THRESHOLD << endl;
         consts_file << "REMOVE_THRESHOLD ; " << REMOVE_THRESHOLD << endl;
         consts_file << "ADD_AND_REMOVE_THRESHOLD ; " << ADD_AND_REMOVE_THRESHOLD << endl;
