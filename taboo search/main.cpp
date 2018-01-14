@@ -36,7 +36,6 @@ int main()
     BigProblem.build_first_solution();
 
     BigProblem.analyze_solution(BigProblem.solution);
-   
     BigProblem.show_solution();
 
     time(&start);

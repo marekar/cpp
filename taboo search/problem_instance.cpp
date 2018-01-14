@@ -56,7 +56,7 @@ void ProblemInstance::show_workers()
     }
 }
 
-void ProblemInstance::build_first_solution(bool override)
+void ProblemInstance::build_first_solution(bool ovr)
 {
     float total_cost = 0;
     float one_task_cost = 0;
@@ -83,8 +83,9 @@ void ProblemInstance::build_first_solution(bool override)
         total_cost += one_task_cost;
     }
     delete[] workers_current_time;
-    if(override){
-        best_cost_ever = cost;
+
+    if(ovr){
+        best_cost_ever = total_cost;
     }
     cost = total_cost;
 
@@ -691,7 +692,6 @@ void ProblemInstance ::step()
     int i = 0;
     bool acceptable;
     this_step_best_cost = BIG_NUMBER;
-
     while (i++ < NEIGHBOUR_SIZE)
     {
 
@@ -751,11 +751,6 @@ void ProblemInstance ::step()
             //not acceptable
         }
     }
-
-    // if (this_step_best_cost < 100000)
-    //     cost_data_for_plot.push_back(this_step_best_cost);
-    // else
-    //     cost_data_for_plot.push_back(0.0);
 
     if (this_step_best_cost < best_cost_ever)
     {
