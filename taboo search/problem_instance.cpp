@@ -86,6 +86,7 @@ void ProblemInstance::build_first_solution(bool ovr)
 
     if(ovr){
         best_cost_ever = total_cost;
+        best_solution = solution;
     }
     cost = total_cost;
 
