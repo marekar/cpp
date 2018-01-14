@@ -9,15 +9,9 @@
 #define workers_amount 30 //ilosc pracownikow
 #define problems_amount 50  //rozmiar problemu
 #define MAX_TRIES 10        
-<<<<<<< HEAD
 #define TABOO_SIZE 20   
 #define NEIGHBOUR_SIZE 500
 #define WORKING_TIME 300   //maksymalny czas
-=======
-#define TABOO_SIZE 30   
-#define NEIGHBOUR_SIZE 30
-#define WORKING_TIME 600   //maksymalny czas
->>>>>>> a315339baddb53bfbc2fa1256857d569cb6ba291
 
 #define MAX_ADDED_TASK 4   //max zmian sąsiedztwa 
 #define MAX_REMOVED_TASK 4  

@@ -41,7 +41,7 @@ int main()
     time(&start);
     time(&my_time);
 
-    while(difftime(my_time,start) < WORKING_TIME){
+    while(difftime(my_time,start) < WORKING_TIME && BigProblem.get_best_cost() > 0){
     BigProblem.step();
     time(&my_time);
     }
