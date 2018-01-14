@@ -56,7 +56,7 @@ void ProblemInstance::show_workers()
     }
 }
 
-void ProblemInstance::build_first_solution()
+void ProblemInstance::build_first_solution(bool override)
 {
     float total_cost = 0;
     float one_task_cost = 0;
@@ -83,8 +83,11 @@ void ProblemInstance::build_first_solution()
         total_cost += one_task_cost;
     }
     delete[] workers_current_time;
+    if(override){
+        best_cost_ever = cost;
+    }
     cost = total_cost;
-    best_cost_ever = cost;
+
     cout << cost;
 }
 
@@ -618,15 +621,21 @@ void ProblemInstance ::get_one_neighbour()
     neighbours.clear();
     if (probability < ADD_THRESHOLD)
     {
+
         neighbours.push_back(add_jobs(1 + rand() % MAX_ADDED_TASK));
+
     }
     else if (probability < REMOVE_THRESHOLD)
     {
+
         neighbours.push_back(remove_jobs(1 + rand() % MAX_REMOVED_TASK));
+
     }
     else if (probability < ADD_AND_REMOVE_THRESHOLD)
     {
+
         neighbours.push_back(add_and_remove_jobs(1 + rand() % MAX_ADDED_TASK, 1 + rand() % MAX_REMOVED_TASK));
+
     }
     else if (probability < SWAP_THRESHOLD)
     {
@@ -634,12 +643,18 @@ void ProblemInstance ::get_one_neighbour()
     }
     else if (probability < TAKE_THRESHOLD)
     {
+
         neighbours.push_back(take_from_another_worker(1 + rand() % MAX_TAKE_FROM_ANOTHER));
     }
+
     else if (probability < TO_LAZY_THRESHOLD)
     {
+
         neighbours.push_back(give_job_to_lazy_worker());
+
     }
+    else
+    cout << "no return!";
 }
 
 void ProblemInstance::search_randomly(int how_many)
@@ -679,9 +694,16 @@ void ProblemInstance ::step()
 
     while (i++ < NEIGHBOUR_SIZE)
     {
-        cout << "bg";
-        get_one_neighbour();
-                cout << "ag";
+
+        try{
+
+            get_one_neighbour();
+
+        }catch(...){
+            cout << "catch activated" << endl;
+        }
+
+
         acceptable = analyze_solution(neighbours[0]);
 
         if (acceptable)
@@ -756,11 +778,15 @@ void ProblemInstance ::step()
     }
     iterations_since_new_value_found++;
 
-    if (iterations_since_new_value_found > MEDIUM_MEMORY_ITERATIONS_THRESHOLD)
+    if (iterations_since_new_value_found > MEDIUM_MEMORY_ITERATIONS_THRESHOLD && taboo_list.mediumList.size() > 0)
     {
         iterations_since_new_value_found = 0;
         solution = taboo_list.get_solution_from_medium_memory();
         cout << endl
              << "getting solution from medium memory";
+             if(solution.size() == 0){
+                 build_first_solution(false);
+                 cout << "BFS";
+             }
     }
 }

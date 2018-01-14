@@ -10,6 +10,7 @@
 #include "consts.h"
 #include "taboo.h"
 #include <time.h>
+#include <exception>
 
 using namespace std;
 
@@ -63,7 +64,7 @@ class ProblemInstance
     void search_randomly(int how_many);
 
     bool analyze_solution(vector<vector<int>> &sol);
-    void build_first_solution();
+    void build_first_solution(bool ovr = true);
 
     void show_solution(vector<vector<int>> &sol = null_sol);
     void show_best_solution() { show_solution(best_solution); }

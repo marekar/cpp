@@ -111,8 +111,9 @@ void TabooList::show_hitlist()
 
 vector<vector<int>> TabooList::get_solution_from_medium_memory()
 {
-    float probability;
+    int probability;
     probability = rand() % mediumList.size();
-    probability = probability * probability * probability / float(mediumList.size() * mediumList.size());
-    return (mediumList[mediumList.size() - 1 - int(probability)]);
+    //probability = probability * probability * probability / float(mediumList.size() * mediumList.size());
+    cout << "returning from medium size list "<< probability << endl;
+    return (mediumList[probability]);
 }
