@@ -693,6 +693,7 @@ void ProblemInstance ::step()
     int i = 0;
     bool acceptable;
     this_step_best_cost = BIG_NUMBER;
+  
     while (i++ < NEIGHBOUR_SIZE)
     {
 
@@ -774,10 +775,14 @@ void ProblemInstance ::step()
     }
     iterations_since_new_value_found++;
 
-    if (iterations_since_new_value_found > MEDIUM_MEMORY_ITERATIONS_THRESHOLD && taboo_list.mediumList.size() > 0)
+    if (iterations_since_new_value_found > MEDIUM_MEMORY_ITERATIONS_THRESHOLD)
     {
         iterations_since_new_value_found = 0;
-        solution = taboo_list.get_solution_from_medium_memory();
+        if(taboo_list.mediumList.size() == 0){
+            build_first_solution(false);
+        }
+        else
+            solution = taboo_list.get_solution_from_medium_memory();
         cout << endl
              << "getting solution from medium memory";
              if(solution.size() == 0){
@@ -785,4 +790,8 @@ void ProblemInstance ::step()
                  cout << "BFS";
              }
     }
+
+  if((correct_generated + incorrect_generated) % (100 * NEIGHBOUR_SIZE) == 0)
+    cout << (correct_generated + incorrect_generated) / NEIGHBOUR_SIZE <<"  " << best_cost_ever 
+        << "  " << this_step_best_cost << endl;
 }
