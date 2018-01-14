@@ -1,13 +1,13 @@
-Best cost ; 18011.9
-Neighbours generated ; 445600
-Part of correct neighbours generated ; 0.423407
-Steps done ; 4456
+Best cost ; 12920.2
+Neighbours generated ; 773100
+Part of correct neighbours generated ; 0.425565
+Steps done ; 25770
 Working time in seconds ; 300
-Solutions allowed by taboo list ; 170553
-Solutions blocked by taboo list ; 18117
+Solutions allowed by taboo list ; 293866
+Solutions blocked by taboo list ; 35138
 Aspirations ; 0
 taboo hitlist ; 
-142 ; 109 ; 107 ; 105 ; 126 ; 109 ; 127 ; 129 ; 118 ; 129 ; 137 ; 122 ; 124 ; 121 ; 127 ; 131 ; 117 ; 133 ; 134 ; 131 ; 111 ; 131 ; 118 ; 127 ; 126 ; 130 ; 118 ; 106 ; 137 ; 130 ; 142 ; 133 ; 144 ; 137 ; 139 ; 121 ; 163 ; 138 ; 162 ; 156 ; 150 ; 150 ; 133 ; 138 ; 151 ; 136 ; 144 ; 152 ; 178 ; 194 ; 157 ; 168 ; 162 ; 165 ; 162 ; 176 ; 190 ; 181 ; 190 ; 214 ; 173 ; 188 ; 190 ; 186 ; 222 ; 211 ; 178 ; 217 ; 209 ; 183 ; 208 ; 199 ; 210 ; 205 ; 223 ; 191 ; 212 ; 240 ; 223 ; 249 ; 236 ; 239 ; 261 ; 239 ; 224 ; 271 ; 281 ; 275 ; 279 ; 279 ; 259 ; 276 ; 281 ; 264 ; 299 ; 305 ; 300 ; 338 ; 344 ; 312 ; 
+900 ; 878 ; 913 ; 956 ; 931 ; 867 ; 949 ; 991 ; 1017 ; 1007 ; 990 ; 1030 ; 1116 ; 1094 ; 1086 ; 1185 ; 1241 ; 1220 ; 1237 ; 1231 ; 1162 ; 1352 ; 1409 ; 1331 ; 1358 ; 1428 ; 1512 ; 1556 ; 1561 ; 1630 ; 
 Best cost history
-4456
-18011.9
+25770
+12920.2
